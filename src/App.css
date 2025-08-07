@@ -1,0 +1,114 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+
+
+.menu-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.content {
+  display: flex;
+  border: 1px solid #ccc;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* Left Tree Panel */
+.left-panel {
+  width: 60%;
+  padding: 15px;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}
+
+/* Right Panel */
+.right-panel {
+  width: 40%;
+  padding: 15px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 10px;
+}
+
+/* Tree Styling */
+.tree-view {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.tree-view li div {
+  font-weight: 500;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  display: inline-block;
+  width: 150px;
+}
+
+/* Hidden File Input */
+.hidden-input {
+  display: none;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+.asset-name{
+  color: black;
+}
