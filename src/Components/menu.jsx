@@ -1,17 +1,34 @@
+
 import React from "react";
-import TreeNode from "./Treenode";
-import "../App.css";
 import RenderTree from "./RenderTress";
 import AddForm from "./AddForm";
+import "../App.css";
+import DeleteForm from "./DeleteFrom";
 
 function Menu() {
   const [treeData, setTreeData] = React.useState(null);
-  const [open,setopen]=React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [opend, setOpend] = React.useState(false);
 
-  const handleClick=()=>{
-    setopen(!open);
-    console.log(open);
-  }
+  const handleClick = () => {
+    setOpen(!open);
+  };
+
+  const handleClickd = () => {
+    setOpend(!opend);
+  };
+
+  // Fetch hierarchy from backend API
+  const fetchHierarchy = async () => {
+    try {
+      const res = await fetch("https://localhost:7285/api/asset/hierarchy");
+      if (!res.ok) throw new Error("Failed to fetch hierarchy");
+      const data = await res.json();
+      setTreeData(data);
+    } catch (err) {
+      console.error("Error fetching hierarchy:", err);
+    }
+  };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -27,7 +44,7 @@ function Menu() {
       const response = await fetch("https://localhost:7285/api/asset/upload", {
         method: "POST",
         body: formData,
-        mode:"cors",
+        mode: "cors",
       });
 
       if (!response.ok) {
@@ -62,49 +79,54 @@ function Menu() {
   };
 
   return (
-   <>
-    <h1 className="page-heading">Asset Hierarchy</h1>
-  <div className="menu-container">
-    {/* LEFT PANEL - Tree */}
-    <div className="left-panel">
-      {treeData ? (
-        <RenderTree treeData={treeData} />
-      ) : (
-        <p>No data uploaded yet.</p>
-      )}
-    </div>
+    <>
+      <h1 className="page-heading">Asset Hierarchy</h1>
+      <div className="menu-container">
+        {/* LEFT PANEL - Tree */}
+        <div className="left-panel">
+          {treeData ? (
+            <RenderTree treeData={treeData} />
+          ) : (
+            <p>No data uploaded yet.</p>
+          )}
+        </div>
 
-    {/* RIGHT PANEL - Buttons */}
-    <div className="right-panel">
-      <div className="button-wrapper">
-        <label htmlFor="upload_tree" className="btn">
-          Upload File
-        </label>
-        <input
-          type="file"
-          accept="application/json, text/plain"
-          id="upload_tree"
-          className="hidden-input"
-          onChange={handleFileChange}
-        />
+        {/* RIGHT PANEL - Buttons */}
+        <div className="right-panel">
+          <div className="button-wrapper">
+            <label htmlFor="upload_tree" className="btn">
+              Upload File
+            </label>
+            <input
+              type="file"
+              accept="application/json, text/plain"
+              id="upload_tree"
+              className="hidden-input"
+              onChange={handleFileChange}
+            />
 
-        <button className="btn" onClick={handleClick}>
-          Add Node
-        </button>
-        {open ? <AddForm/> :"" }
+            <button className="btn" onClick={handleClick}>
+              Add Node
+            </button>
+            {open ? <AddForm onSuccess={fetchHierarchy} /> : ""}
 
-        <button className="btn" onClick={() => alert("Delete Node feature coming soon!")}>
-          Delete Node
-        </button>
+            <button
+              className="btn"
+              onClick={handleClickd}
+            >
+              Delete Node
+            </button>
+            {opend ? <DeleteForm onSuccess={fetchHierarchy} /> : ""}
 
-        <button className="btn" onClick={handleDownload}>
-          Download Data
-        </button>
+            <button className="btn" onClick={handleDownload}>
+              Download Data
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  </>
-);
+    </>
+  );
 }
 
 export default Menu;
+
