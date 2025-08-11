@@ -2,6 +2,8 @@ import React from "react";
 import TreeNode from "./Treenode";
 
 const RenderTress=({treeData})=>{
+
+  console.log("the data getting ",treeData);  
     return(
         <>
         {treeData && treeData.length > 0 && (

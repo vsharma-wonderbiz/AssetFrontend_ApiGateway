@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../App.css'; // Assuming CSS is in App.css
-
+import { toast } from 'react-toastify';
 const DeleteForm = ({ onSuccess }) => {
   const [nodeId, setNodeId] = useState('');
   const [error, setError] = useState('');
@@ -20,7 +20,7 @@ const DeleteForm = ({ onSuccess }) => {
     setError('');
   };
 
-  const handleSubmit =async (e) => {
+  const handleSubmit =async  (e) => {
     e.preventDefault();
     if (!validateForm()) {
       return;
@@ -29,16 +29,16 @@ const DeleteForm = ({ onSuccess }) => {
     
     try {
       await axios.delete(`https://localhost:7285/api/asset/${nodeId}`);
-      alert('Node deleted successfully!');
+      toast.success("Node deleted successfully!")
       if (onSuccess) {
         onSuccess();
       }
     } catch (error) {
       console.error('Error deleting node:', error);
-      alert('Failed to delete node!');
+      toast.error("Failed to Delete");
     }
     
-    alert('Node deletion validated successfully!');
+    // alert('Node deletion validated successfully!');
     setNodeId('');
   };
 

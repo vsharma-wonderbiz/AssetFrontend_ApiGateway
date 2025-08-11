@@ -96,7 +96,7 @@
 }
    */
 
-   @tailwind base;
+   /* @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -133,10 +133,10 @@
   min-height: 400px;
   display: flex;
   /* align-items: center; */
-  justify-content: center;
-}
+  /* justify-content: center;
+} */
 
-.left-panel p {
+/* .left-panel p {
   color: #718096;
   font-size: 1.1rem;
   font-style: italic;
@@ -179,7 +179,7 @@
 
 .hidden-input {
   display: none;
-}
+} */ */
 
 
 /* -------------------------------------addd from------------------------------------ */

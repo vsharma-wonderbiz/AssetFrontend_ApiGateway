@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../App.css';
+import { toast } from 'react-toastify';
 
 const AddForm = ({ onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -73,7 +74,7 @@ const AddForm = ({ onSuccess }) => {
           : null,
       };
       await axios.post('https://localhost:7285/api/asset', payload);
-      alert('Data submitted successfully!');
+      toast.success("Data Submitted Successfully!");
 
       if (onSuccess) {
         onSuccess(); // Refresh hierarchy in parent
@@ -82,8 +83,9 @@ const AddForm = ({ onSuccess }) => {
       setFormData({ id: '', name: '', parentAssetId: '' });
       setErrors({ id: '', name: '', parentAssetId: '' });
     } catch (error) {
-      console.error('Error submitting data:', error);
-      alert('Failed to submit data!');
+      console.error('Error submitting data');
+      // alert(error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
 
