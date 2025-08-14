@@ -10,11 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.1",
+    "@mui/material": "^7.3.1",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
+    "material": "^0.9.24",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "ui": "^0.2.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

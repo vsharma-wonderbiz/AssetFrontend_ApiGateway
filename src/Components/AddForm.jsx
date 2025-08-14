@@ -25,7 +25,7 @@ const AddForm = ({ onSuccess }) => {
       isValid = false;
     }
 
-    // Validate Name: Only alphanumeric characters, max 30 characters
+  
     if (!/^[a-zA-Z0-9\s]*$/.test(formData.name)) {
       newErrors.name = 'Name can only contain letters, numbers, and spaces';
       isValid = false;
@@ -53,7 +53,7 @@ const AddForm = ({ onSuccess }) => {
       ...prev,
       [name]: value,
     }));
-    // Clear error for the field being edited
+    // Clear error for the field being edited                                                       
     setErrors((prev) => ({
       ...prev,
       [name]: '',
@@ -77,7 +77,7 @@ const AddForm = ({ onSuccess }) => {
       toast.success("Data Submitted Successfully!");
 
       if (onSuccess) {
-        onSuccess(); // Refresh hierarchy in parent
+        onSuccess(); 
       }
 
       setFormData({ id: '', name: '', parentAssetId: '' });
@@ -121,7 +121,7 @@ const AddForm = ({ onSuccess }) => {
           {errors.name && <p className="error-message">{errors.name}</p>}
         </div>
         <div className="form-group">
-          <label htmlFor="parentAssetId">Parent Asset ID (Optional)</label>
+          <label htmlFor="parentAssetId">Parent Asset ID (Keep Empty to make a root asset)</label>
           <input
             type="text"
             name="parentAssetId"
