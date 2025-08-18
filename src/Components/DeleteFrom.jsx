@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
 import '../App.css'; // Assuming CSS is in App.css
 import { toast } from 'react-toastify';
-const DeleteForm = ({ onSuccess }) => {
+const DeleteForm = ({ onSuccess ,treeData }) => {
   const [nodeId, setNodeId] = useState('');
   const [error, setError] = useState('');
   const [confirmDelete,setConfirmDelete]=useState(false);
@@ -20,6 +20,20 @@ const DeleteForm = ({ onSuccess }) => {
     setError('');
     return true;
   };
+const isExists = (nodes, nodeId) => {
+  if (!nodes || nodes.length === 0) return false;
+
+  for (let node of nodes) {
+    if (node.id === nodeId) {
+      return true;
+    }
+    if (node.children && isExists(node.children, nodeId)) {
+      return true;
+    }
+  }
+
+  return false;
+};  
 
   const handleChange = (e) => {
     
@@ -30,30 +44,20 @@ const DeleteForm = ({ onSuccess }) => {
   };
 
   const handleSubmit =  (e) => {
-    // e.preventDefault();
-    // if (!validateForm()) {
-    //   return;
-    // }
-    // // Comment out axios for testing; uncomment for backend use
     
-    // try {
-    //   await axios.delete(`https://localhost:7285/api/asset/${nodeId}`);
-    //   toast.success("Node deleted successfully!")
-    //   if (onSuccess) {
-    //     onSuccess();
-    //   }
-    // } catch (error) {
-    //   console.error('Error deleting node:', error);
-    //   toast.error(error.response.data.message);
-    // }
+    if(!isExists(treeData,nodeId)){
     
-    // alert('Node deletion validated successfully!');
-    console.log(confirmDelete)
   
      setConfirmDelete(true);
+    }else{
+      toast.error(`no Id ${nodeId} present`)
+      return;
+    }
   };
 
  const HandleDelet = async (e) => {
+
+  if(!isExists(treeData,nodeId)){
   e.preventDefault();
 
   if (!validateForm()) {
@@ -72,7 +76,13 @@ const DeleteForm = ({ onSuccess }) => {
   } finally {
     setConfirmDelete(false);
   }
+}
+else{
+  toast.error("Id Does not found")
+}
 };
+
+
 
   return (
     <div className="form-container">

@@ -177,7 +177,7 @@ import { toast } from 'react-toastify';
               >
                 Delete Node
               </button>
-              {openDelete && <DeleteForm onSuccess={onSuccessHandler} />}
+              {openDelete && <DeleteForm onSuccess={onSuccessHandler}  treeData={treeData} />}
 
               {/* Download Data */}
               <button
