@@ -5,6 +5,7 @@ import AddForm from "./AddForm";        // Add node form
 import DeleteForm from "./DeleteFrom";  // Delete node form
 import "../App.css";
 import { toast } from 'react-toastify';
+import Search from "./Search";
 
   function Menu() {
     const [treeData, setTreeData] = useState(null);
@@ -105,6 +106,8 @@ import { toast } from 'react-toastify';
         <h1 className="page-heading text-3xl font-bold text-gray-800 text-center pt-6 mb-8">
           Asset Hierarchy
         </h1>
+
+        <Search Data={treeData}/>
 
         <div className="menu-container container mx-auto px-4 flex flex-col lg:flex-row gap-6">
 
