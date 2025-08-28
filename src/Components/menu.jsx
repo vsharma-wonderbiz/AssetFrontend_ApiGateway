@@ -6,12 +6,14 @@ import DeleteForm from "./DeleteFrom";  // Delete node form
 import "../App.css";
 import { toast } from 'react-toastify';
 import Search from "./Search";
+import Search2 from "./Search2";
 
   function Menu() {
-    const [treeData, setTreeData] = useState(null);
+    const [treeData, setTreeData] = useState([]);
     const [openAdd, setOpenAdd] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [stats, setStats] = useState({ totalNodes: 0, maxDepth: 0 });
+    const [SearchTerm,SetSearchTerm]=useState("");
 
     // Fetch hierarchy data
     const fetchHierarchy = async () => {
@@ -49,38 +51,40 @@ import Search from "./Search";
     }, []);
 
     // Handle JSON file upload
-    const handleFileChange = async (e) => {
-      const file = e.target.files[0];
-      toast.success("File Uploaded Successfully")
-      if (!file) {
-        toast.error("File Uploaded Successfully")
-        return;
-      }
+   const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) {
+    toast.error("No file selected");
+    return;
+  }
 
-      const formData = new FormData();
-      formData.append("file", file);
+  const formData = new FormData();
+  formData.append("file", file);
 
-      try {
-        const response = await fetch("https://localhost:7285/api/Asset/upload", {
-          method: "POST",
-          body: formData,
-          mode: "cors",
-        });
+  try {
+    const response = await fetch("https://localhost:7285/api/Asset/upload", {
+      method: "POST",
+      body: formData,
+      mode: "cors",
+    });
 
-        if (!response.ok) {
-          const errMsg = await response.text();
-          throw new Error(errMsg);
-        }
+    if (!response.ok) {
+      const errMsg = await response.text();
+      throw new Error(errMsg);
+    }
 
-        const data = await response.json();
-        setTreeData(data);
-        await fetchStatistics();
-        alert("Upload successful!");
-      } catch (error) {
-        console.error("Upload error:", error.message);
-        alert("Upload failed: " + error.message);
-      }
-    };
+    toast.success("File Uploaded Successfully");
+
+    // **Upload ke baad updated hierarchy aur stats fetch karo**
+    await onSuccessHandler();  
+
+    alert("Upload successful!");  // Alert dikhana optional, toast already dikha raha hai
+  } catch (error) {
+    console.error("Upload error:", error.message);
+    toast.error("Upload failed: " + error.message);
+  }
+};
+
 
     // Download treeData as JSON file
     const handleDownload = () => {
@@ -98,8 +102,21 @@ import Search from "./Search";
       link.click();
       URL.revokeObjectURL(url);
     };
+  
 
+  const filterTree = (nodes, keyword) => {
+  if (!keyword) return nodes; // no input -> full tree
 
+  return nodes
+    .map(node => {
+      const children = node.children ? filterTree(node.children, keyword) : [];
+      if (node.name.toLowerCase().includes(keyword.toLowerCase()) || children.length) {
+        return { ...node, children };
+      }
+      return null;
+    })
+    .filter(Boolean);
+};
 
     return (
       <div className="min-h-screen bg-gray-100 font-sans">
@@ -107,8 +124,8 @@ import Search from "./Search";
           Asset Hierarchy
         </h1>
 
-        <Search Data={treeData}/>
-
+        <Search2 SearchTerm={SearchTerm} SetSearchTerm={SetSearchTerm} />
+           {console.log("CurrentSearch term:",SearchTerm)};
         <div className="menu-container container mx-auto px-4 flex flex-col lg:flex-row gap-6">
 
           {/* Left Panel: Stats + Tree */}
@@ -116,7 +133,7 @@ import Search from "./Search";
             <div className="left-panel-split flex flex-col md:flex-row gap-6">
 
               {/* Statistics */}
-              <div className="statistics-section md:w-1/3 bg-gray-50 rounded-lg p-4 shadow-sm">
+              <div className="statistics-section md:w-1/3 bg-gray-50 rounded-lg p-4 shadow-sm h-140px]">
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">Statistics</h2>
                 {treeData ? (
                   <ul className="space-y-2 text-gray-600">
@@ -137,7 +154,7 @@ import Search from "./Search";
               {/* Tree Section */}
               <div className="tree-section md:w-2/3">
                 {treeData ? (
-                  <RenderTree treeData={treeData} onSuccess={onSuccessHandler} />
+                  <RenderTree treeData={filterTree(treeData,SearchTerm)} onSuccess={onSuccessHandler} SearchTerm={SearchTerm} />
                 ) : (
                   <p className="text-gray-500">No data uploaded yet.</p>
                 )}
