@@ -11,7 +11,7 @@ const DeleteForm = ({ onSuccess, treeData }) => (
       <input type="text" placeholder="Node ID to delete" className="w-full px-3 py-2 border rounded-lg" />
       <button className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Delete Node</button>
     </div>
-  </div>
+  </div>    
 );
 
 // const Search2 = ({ SearchTerm, SetSearchTerm }) => (
@@ -201,7 +201,8 @@ function Menu1() {
     if (!keyword) return nodes;
     return nodes
       .map((node) => {
-        const children = node.children ? filterTree(node.children, keyword) : [];
+        const children = node.children ? filterTree(node.children, keyword) : ["No data Found"];
+        
         if (node.name.toLowerCase().includes(keyword.toLowerCase()) || children.length) {
           return { ...node, children };
         }
@@ -235,10 +236,10 @@ function Menu1() {
 
       <div className="container mx-auto px-6 py-8">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <StatCard icon={BarChart3} title="Total Nodes" value={stats.totalNodes} color="from-blue-500 to-blue-600" />
           <StatCard icon={FolderTree} title="Maximum Depth" value={stats.maxDepth} color="from-emerald-500 to-emerald-600" />
-          <StatCard icon={Activity} title="Active Sessions" value="1" color="from-purple-500 to-purple-600" />
+          
         </div>
 
         {/* Search */}

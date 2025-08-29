@@ -82,14 +82,14 @@
 // import { toast } from "react-toastify";
 // import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 
-// const TreeNode = ({ node, searchTerm, onDelete }) => {
+// const TreeNode = ({ node, SearchTerm, onDelete }) => {
 //   const [openDialog, setOpenDialog] = useState(false);
 
 //   const nodename = node.name;
 
 //   // Split node name into parts for highlighting
-//   const parts = searchTerm && searchTerm.trim()
-//     ? nodename.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi"))
+//   const parts = SearchTerm && SearchTerm.trim()
+//     ? nodename.split(new RegExp(`(${SearchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi"))
 //     : [nodename];
 
 //   // Copy node ID to clipboard
@@ -123,7 +123,7 @@
 
 //         {/* Highlight matching parts */}
 //         {parts.map((part, index) =>
-//           searchTerm && searchTerm.trim() && part.toLowerCase() === searchTerm.toLowerCase() ? (
+//           SearchTerm && SearchTerm.trim() && part.toLowerCase() === SearchTerm.toLowerCase() ? (
 //             <span key={index} className="bg-yellow-300 font-bold">{part}</span>
 //           ) : (
 //             <span key={index}>{part}</span>
@@ -150,7 +150,7 @@
 //       {node.children && node.children.length > 0 && (
 //         <ul className="ml-4 border-l-2 border-gray-200 pl-4">
 //           {node.children.map((child) => (
-//             <TreeNode key={child.id} node={child} searchTerm={searchTerm} onDelete={onDelete} />
+//             <TreeNode key={child.id} node={child} SearchTerm={SearchTerm} onDelete={onDelete} />
 //           ))}
 //         </ul>
 //       )}
@@ -169,14 +169,14 @@
 // import { toast } from "react-toastify";
 // import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 
-// const TreeNode = ({ node, searchTerm, onSuccess }) => {
+// const TreeNode = ({ node, SearchTerm, onSuccess }) => {
 //   const [openDialog, setOpenDialog] = useState(false);
 
 //   const nodename = node.name;
 
 //   // Split node name into parts for highlighting
-//   const parts = searchTerm && searchTerm.trim()
-//     ? nodename.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi"))
+//   const parts = SearchTerm && SearchTerm.trim()
+//     ? nodename.split(new RegExp(`(${SearchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi"))
 //     : [nodename];
 
 //   const copyID = () => {
@@ -213,7 +213,7 @@
 
 //         {/* Highlight matching parts */}
 //         {parts.map((part, index) =>
-//           searchTerm && searchTerm.trim() && part.toLowerCase() === searchTerm.toLowerCase() ? (
+//           SearchTerm && SearchTerm.trim() && part.toLowerCase() === SearchTerm.toLowerCase() ? (
 //             <span key={index} className="bg-yellow-300 font-bold">{part}</span>
 //           ) : (
 //             <span key={index}>{part}</span>
@@ -240,7 +240,7 @@
 //       {node.children && node.children.length > 0 && (
 //         <ul className="ml-4 border-l-2 border-gray-200 pl-4">
 //           {node.children.map((child) => (
-//             <TreeNode key={child.id} node={child} searchTerm={searchTerm} onSuccess={onSuccess} />
+//             <TreeNode key={child.id} node={child} SearchTerm={SearchTerm} onSuccess={onSuccess} />
 //           ))}
 //         </ul>
 //       )}
@@ -267,23 +267,42 @@
 
 // --------------------------------------kfhaifhajadz--------------------------------
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import { ChevronRight, ExpandMore } from "@mui/icons-material";
 
-const TreeNode = ({ node, searchTerm, onSuccess, isRoot = false }) => {
+const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false }) => {
   const [openDialog, setOpenDialog] = useState(false);
+
+  console.log(SearchTerm)
+  const hasMatch=(node.name?.toLowerCase()  || "").includes(SearchTerm?.toLowerCase());
+  const childMatch=node.children?.some(child=>
+    child.name.toLowerCase().includes(SearchTerm?.toLowerCase())
+  )
+
+  console.log(hasMatch);
+  console.log(childMatch);
   const [expanded, setExpanded] = useState(false); // For collapsing children
+
+  useEffect(()=>{
+    if(SearchTerm && (hasMatch || childMatch)){
+      setExpanded(true);
+    }else{
+      setExpanded(false)
+    }
+  },[SearchTerm]);
 
   const nodename = node.name;
 
   // Highlight search term
-  const parts = searchTerm && searchTerm.trim()
-    ? nodename.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi"))
+  const parts = SearchTerm && SearchTerm.trim()
+    ? nodename.split(new RegExp(`(${SearchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi"))
     : [nodename];
+
+    // console.log(parts)
 
   const copyID = () => {
     navigator.clipboard.writeText(node.id);
@@ -324,7 +343,7 @@ const TreeNode = ({ node, searchTerm, onSuccess, isRoot = false }) => {
           )}
           <span className="w-3 h-3 rounded-full bg-blue-500"></span>
           {parts.map((part, index) =>
-            searchTerm && searchTerm.trim() && part.toLowerCase() === searchTerm.toLowerCase() ? (
+            SearchTerm && SearchTerm.trim() && part.toLowerCase() === SearchTerm.toLowerCase() ? (
               <span key={index} className="bg-yellow-300 font-bold">{part}</span>
             ) : (
               <span key={index}>{part}</span>
@@ -357,7 +376,7 @@ const TreeNode = ({ node, searchTerm, onSuccess, isRoot = false }) => {
             <TreeNode
               key={child.id}
               node={child}
-              searchTerm={searchTerm}
+              SearchTerm={SearchTerm}
               onSuccess={onSuccess}
               isRoot={false}
             />

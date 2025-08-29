@@ -299,7 +299,9 @@ const AddForm = ({ onSuccess }) => {
       newErrors.name = 'Name must be at least 2 characters long';
       isValid = false;
     }
-
+    else if(formData.name===""){
+      newErrors.name='Name Cannot be Empty'
+    }
     // Validate Parent Asset ID: Must be empty or a non-negative integer
     if (formData.parentAssetId && !/^[0-9]+$/.test(formData.parentAssetId)) {
       newErrors.parentAssetId =
@@ -333,7 +335,7 @@ const AddForm = ({ onSuccess }) => {
     
     try {
       const payload = {
-        name: formData.name,
+        name: formData.name.trim(),
         parentAssetId: formData.parentAssetId
           ? Number(formData.parentAssetId)
           : null,
