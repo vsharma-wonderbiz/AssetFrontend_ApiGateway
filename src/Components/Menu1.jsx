@@ -1,31 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { Upload, Plus, Trash2, Download, Search, BarChart3, FolderTree, Activity } from "lucide-react";
 import AddForm from "./AddForm";
 import RenderTress from "./RenderTress";
 import Search2 from "./Search2";
-
-const DeleteForm = ({ onSuccess, treeData }) => (
-  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-    <h3 className="font-semibold text-red-800 mb-2">Delete Node</h3>
-    <div className="space-y-2">
-      <input type="text" placeholder="Node ID to delete" className="w-full px-3 py-2 border rounded-lg" />
-      <button className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Delete Node</button>
-    </div>
-  </div>    
-);
-
-// const Search2 = ({ SearchTerm, SetSearchTerm }) => (
-//   <div className="relative mb-6">
-//     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-//     <input
-//       type="text"
-//       placeholder="Search assets..."
-//       value={SearchTerm}
-//       onChange={(e) => SetSearchTerm(e.target.value)}
-//       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-//     />
-//   </div>
-// );
 
 // File Upload Component
 const FileUpload = ({ onFileChange }) => {
@@ -121,6 +98,8 @@ function Menu1() {
   const [stats, setStats] = useState({ totalNodes: 0, maxDepth: 0 });
   const [SearchTerm, SetSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showOverlay,setShowOverlay]=useState(false);
+  const [selectedNode, setSelectedNode] = useState(null);
 
   useEffect(() => {
     fetchHierarchy();
@@ -211,6 +190,8 @@ function Menu1() {
       .filter(Boolean);
   };
 
+  console.log("Selected Node in Menu1:", selectedNode);
+  console.log("Show Overlay in Menu1:", showOverlay);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100">
       {/* Header */}
@@ -263,7 +244,9 @@ function Menu1() {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                   </div>
                 ) : treeData.length > 0 ? (
-                  <RenderTress treeData={filterTree(treeData, SearchTerm)} onSuccess={onSuccessHandler} SearchTerm={SearchTerm} />
+                  <RenderTress treeData={filterTree(treeData, SearchTerm)} onSuccess={onSuccessHandler} SearchTerm={SearchTerm}
+                   setShowOverlay={setShowOverlay} setSelectedNode={setSelectedNode}
+                   />
                 ) : (
                   <div className="text-center py-12">
                     <FolderTree className="w-16 h-16 text-gray-300 mx-auto mb-4" />
