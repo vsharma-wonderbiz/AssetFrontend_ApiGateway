@@ -143,6 +143,8 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
               SearchTerm={SearchTerm}
               onSuccess={onSuccess}
               isRoot={false}
+              setSelectedNode={setSelectedNode}
+              setShowOverlay={setShowOverlay}
             />
           ))}
         </ul>

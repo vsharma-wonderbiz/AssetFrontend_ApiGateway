@@ -10,7 +10,12 @@ const RenderTress=({treeData , onSuccess,SearchTerm,setShowOverlay,setSelectedNo
         {treeData && treeData.length > 0 && (
             <ul className="tree-view">
               {treeData.map((node) => (
-                <TreeNode key={node.id} node={node} onSuccess={onSuccess} SearchTerm={SearchTerm} setShowOverlay={setShowOverlay} setSelectedNode={setSelectedNode} />
+                <TreeNode key={node.id} 
+                node={node}
+                 onSuccess={onSuccess}
+                  SearchTerm={SearchTerm}
+                   setShowOverlay={setShowOverlay} 
+                   setSelectedNode={setSelectedNode} />
               ))}
             </ul>
           )}

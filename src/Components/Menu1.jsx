@@ -3,6 +3,7 @@ import { Upload, Plus, Trash2, Download, Search, BarChart3, FolderTree, Activity
 import AddForm from "./AddForm";
 import RenderTress from "./RenderTress";
 import Search2 from "./Search2";
+import SignalOverlay from "./SignalOverlay";
 
 // File Upload Component
 const FileUpload = ({ onFileChange }) => {
@@ -305,6 +306,7 @@ function Menu1() {
           </div>
         </div>
       </div>
+      <SignalOverlay show={showOverlay} node={selectedNode} onClose={()=>setShowOverlay(false)}/> 
     </div>
   );
 }
