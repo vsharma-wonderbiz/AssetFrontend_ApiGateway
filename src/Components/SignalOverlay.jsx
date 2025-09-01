@@ -34,6 +34,8 @@ const SignalOverlay = ({show,node,onClose}) => {
     }catch(error){
         toast.error("Error submitting form:" + error);
     }
+
+    onClose();
   };
 
   return (
@@ -46,6 +48,9 @@ const SignalOverlay = ({show,node,onClose}) => {
             <label className="block font-medium">Signal Name:</label>
             <input 
               type="text" 
+              name="signalName"
+              value={formData.signalName}
+              onChange={handleChange}
               className="w-full border px-2 py-1 rounded" 
               placeholder="Enter signal name"
             />
@@ -55,6 +60,9 @@ const SignalOverlay = ({show,node,onClose}) => {
             <label className="block font-medium">Value Type:</label>
             <input 
               type="text" 
+              name="valueType"
+              value={formData.valueType}
+              onChange={handleChange}
               className="w-full border px-2 py-1 rounded" 
               placeholder="Enter value type"
             />
@@ -64,6 +72,9 @@ const SignalOverlay = ({show,node,onClose}) => {
             <label className="block font-medium">Description:</label>
             <textarea 
               className="w-full border px-2 py-1 rounded" 
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
               placeholder="Enter description"
             />
           </div>
@@ -90,7 +101,7 @@ const SignalOverlay = ({show,node,onClose}) => {
               type="submit" 
               className="px-4 py-2 bg-blue-500 text-white rounded"
               onClick={handleSubmit}
-              onClose={onClose}
+             
             >
               Add
             </button>

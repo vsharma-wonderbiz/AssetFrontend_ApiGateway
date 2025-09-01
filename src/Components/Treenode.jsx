@@ -6,11 +6,13 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/
 import { ChevronRight, ExpandMore } from "@mui/icons-material";
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
+import { useNavigate } from "react-router-dom";
 
 const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,setSelectedNode }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [AddSignal,setAddSignal] = useState(false);
   const [DisplaySignals,setDisplaySignals] = useState(false);
+  const navigate=useNavigate();
 
   console.log(SearchTerm)
   const hasMatch=(node.name?.toLowerCase()  || "").includes(SearchTerm?.toLowerCase());
@@ -82,7 +84,11 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
     // You can implement the actual logic here later
   };
 
-    console.log(DisplaySignals);
+  const handleDisplaySignals=()=>{
+    console.log(node);
+      navigate("/display-signals",{state:node})
+  }
+    
     // You can implement the actual logic here later
  
 
@@ -118,7 +124,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
       {/* Context Menu */}
       <Menu id={`menu_${node.id}`}>
          <Item onClick={handleAddSignal}>Add Signal</Item>
-         <Item onClick={()=>setDisplaySignals(!DisplaySignals)}>Display Signals</Item>
+         <Item onClick={handleDisplaySignals}>Display Signals</Item>
       </Menu>
 
       
