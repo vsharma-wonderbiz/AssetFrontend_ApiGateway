@@ -473,7 +473,7 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
       onClose();
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error: " + error.message);
+      toast.error("Error: the signal already exists in asset" );
     } finally {
       setIsSubmitting(false);
     }
