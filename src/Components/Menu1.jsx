@@ -101,6 +101,7 @@ function Menu1() {
   const [loading, setLoading] = useState(false);
   const [showOverlay,setShowOverlay]=useState(false);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [overlayMode, setOverlayMode] = useState("add"); 
 
   useEffect(() => {
     fetchHierarchy();
@@ -246,7 +247,7 @@ function Menu1() {
                   </div>
                 ) : treeData.length > 0 ? (
                   <RenderTress treeData={filterTree(treeData, SearchTerm)} onSuccess={onSuccessHandler} SearchTerm={SearchTerm}
-                   setShowOverlay={setShowOverlay} setSelectedNode={setSelectedNode}
+                   setShowOverlay={setShowOverlay} setSelectedNode={setSelectedNode} setOverlayMode={setOverlayMode}
                    />
                 ) : (
                   <div className="text-center py-12">
@@ -306,7 +307,13 @@ function Menu1() {
           </div>
         </div>
       </div>
-      <SignalOverlay show={showOverlay} node={selectedNode} onClose={()=>setShowOverlay(false)}/> 
+    <SignalOverlay
+  show={showOverlay}
+  node={selectedNode}
+  mode={overlayMode}               // add / edit
+  onClose={() => setShowOverlay(false)}
+  onSuccess={onSuccessHandler}     // refresh after save
+/>
     </div>
   );
 }

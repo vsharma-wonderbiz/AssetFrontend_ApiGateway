@@ -8,7 +8,7 @@ import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import { useNavigate } from "react-router-dom";
 
-const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,setSelectedNode }) => {
+const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,setSelectedNode,setOverlayMode }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [AddSignal,setAddSignal] = useState(false);
   const [DisplaySignals,setDisplaySignals] = useState(false);
@@ -80,6 +80,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
   // Separate handlers for different menu actions
   const handleAddSignal = () => {
     setShowOverlay(true);
+     setOverlayMode("add");   
     setSelectedNode(node);
     // You can implement the actual logic here later
   };
@@ -151,6 +152,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
               isRoot={false}
               setSelectedNode={setSelectedNode}
               setShowOverlay={setShowOverlay}
+              setOverlayMode={setOverlayMode}
             />
           ))}
         </ul>
