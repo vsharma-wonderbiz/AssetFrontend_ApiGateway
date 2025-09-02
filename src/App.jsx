@@ -9,6 +9,7 @@ import FullPageOverlay from './Components/FullPageOverlay.jsx'
 import SignalOverlay from './Components/SignalOverlay.jsx'
 import SignalsTable from './Components/SignalsTable.jsx'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AuthForm from './Components/AuthFrom.jsx'
 
 const App = () => {
 
@@ -24,6 +25,7 @@ const App = () => {
           <Routes>
             <Route path="/"  element={<Menu1/>}></Route>
             <Route path="/display-signals"  element={<SignalsTable/>}></Route>
+            <Route path="/Register" element={<AuthForm/>}></Route>
           </Routes>
       </Router>
 

@@ -5,6 +5,7 @@ import { Edit, Trash2, Settings } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import SignalOverlay from './SignalOverlay';
+import {jwtDecode} from "jwt-decode";
 
 const SignalsTable = () => {
   const { assetId } = useParams(); // Get assetId from URL
@@ -15,6 +16,15 @@ const SignalsTable = () => {
   const [showOverlay, setShowOverlay] = useState(false);
   const [editSignal, setEditSignal] = useState(null);
   const [node, setNode] = useState(nodeFromState || null);
+  const [userRole, setUserRole] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUserRole(decoded.role || decoded.userRole);
+    }
+  }, []);
 
   // Persist node data in localStorage to handle refresh
   useEffect(() => {
@@ -148,7 +158,8 @@ const SignalsTable = () => {
           Asset ID: <span className="font-semibold text-gray-800">{assetId || node.id || 'N/A'}</span>
         </p>
         <div className="mt-4 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
-        <button
+
+        {userRole==="Admin" ? ( <button
           onClick={() => {
             setEditSignal(null);
             setShowOverlay(true);
@@ -156,7 +167,16 @@ const SignalsTable = () => {
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Add Signal
-        </button>
+        </button>) : (<div></div>)}
+        {/* <button
+          onClick={() => {
+            setEditSignal(null);
+            setShowOverlay(true);
+          }}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Add Signal
+        </button> */}
       </div>
 
       {/* Table or Empty State */}
@@ -170,7 +190,8 @@ const SignalsTable = () => {
                   <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Signal Name</th>
                   <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Value Type</th>
                   <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Description</th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Actions</th>
+                  {userRole==="Admin" ? <th className="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Actions</th>:<div></div>}
+                 
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -186,18 +207,25 @@ const SignalsTable = () => {
                         {signal.signalId}
                       </div>
                     </td>
+
+
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-semibold text-gray-900">{signal.signalName}</div>
                     </td>
+
+
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getValueTypeColor(signal.valueType)}`}>
                         {signal.valueType}
                       </span>
                     </td>
+
+
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-700 max-w-xs">{signal.description}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      
+                      {userRole==="Admin" ? (<td className="px-6 py-4 whitespace-nowrap text-center">
                       <div className="flex items-center justify-center space-x-3">
                         <button
                           onClick={() => handleEdit(signal.signalId)}
@@ -217,7 +245,31 @@ const SignalsTable = () => {
                           <Trash2 className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
                         </button>
                       </div>
-                    </td>
+                    </td>):(<div></div>)}
+
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="flex items-center justify-center space-x-3">
+                        <button
+                          onClick={() => handleEdit(signal.signalId)}
+                          className="inline-flex items-center p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
+                          title="Edit Signal"
+                        >
+                          <Edit className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSignalToDelete(signal.signalId);
+                            setConfirmDelete(true);
+                          }}
+                          className="inline-flex items-center p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200 group"
+                          title="Delete Signal"
+                        >
+                          <Trash2 className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                        </button>
+                      </div>
+                    </td> */}
+
+
                   </tr>
                 ))}
               </tbody>

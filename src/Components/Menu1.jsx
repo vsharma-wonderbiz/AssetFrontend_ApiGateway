@@ -1,9 +1,11 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload, Plus, Trash2, Download, Search, BarChart3, FolderTree, Activity } from "lucide-react";
 import AddForm from "./AddForm";
 import RenderTress from "./RenderTress";
 import Search2 from "./Search2";
 import SignalOverlay from "./SignalOverlay";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 // File Upload Component
 const FileUpload = ({ onFileChange }) => {
@@ -56,12 +58,10 @@ const FileUpload = ({ onFileChange }) => {
           className="hidden"
           onChange={handleChange}
         />
-
         <div className="flex flex-col items-center space-y-4">
           <div className={`p-4 rounded-full transition-colors ${dragActive ? "bg-blue-100" : "bg-gray-100"}`}>
             <Upload className={`w-8 h-8 ${dragActive ? "text-blue-600" : "text-gray-600"}`} />
           </div>
-
           <div>
             <p className="text-lg font-semibold text-gray-700 mb-2">
               {dragActive ? "Drop your file here" : "Upload Asset Hierarchy"}
@@ -99,9 +99,26 @@ function Menu1() {
   const [stats, setStats] = useState({ totalNodes: 0, maxDepth: 0 });
   const [SearchTerm, SetSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showOverlay,setShowOverlay]=useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [overlayMode, setOverlayMode] = useState("add"); 
+  const [overlayMode, setOverlayMode] = useState("add");
+  const [userRole, setUserRole] = useState();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const navigate=useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      console.log("Decoded:", decoded);
+      const Role = decoded.role || decoded.Role || decoded.userRole;
+      setUserRole(Role);
+    }else {
+    setIsLoggedIn(false);
+    setUserRole(null);
+  }
+  }, []);
 
   useEffect(() => {
     fetchHierarchy();
@@ -157,7 +174,7 @@ function Menu1() {
       });
       if (!res.ok) throw new Error("Upload failed");
       alert("File uploaded successfully!");
-      onSuccessHandler(); // Refresh hierarchy and stats
+      onSuccessHandler();
     } catch (err) {
       console.error("Error uploading file:", err);
       alert("Failed to upload file");
@@ -183,7 +200,6 @@ function Menu1() {
     return nodes
       .map((node) => {
         const children = node.children ? filterTree(node.children, keyword) : ["No data Found"];
-        
         if (node.name.toLowerCase().includes(keyword.toLowerCase()) || children.length) {
           return { ...node, children };
         }
@@ -192,8 +208,11 @@ function Menu1() {
       .filter(Boolean);
   };
 
+
+
   console.log("Selected Node in Menu1:", selectedNode);
   console.log("Show Overlay in Menu1:", showOverlay);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100">
       {/* Header */}
@@ -211,7 +230,21 @@ function Menu1() {
             </div>
             <div className="flex items-center space-x-2 text-sm text-gray-500">
               <Activity className="w-4 h-4" />
-              <span>Live Dashboard</span>
+          {isLoggedIn ? (
+               <button
+                  onClick={handleLogout}
+                   className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                >
+                      Logout
+               </button>
+              ) : (
+              <button
+                onClick={() => navigate("/Register")}
+               className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+               >
+               Login
+             </button>
+         )}
             </div>
           </div>
         </div>
@@ -220,9 +253,18 @@ function Menu1() {
       <div className="container mx-auto px-6 py-8">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <StatCard icon={BarChart3} title="Total Nodes" value={stats.totalNodes} color="from-blue-500 to-blue-600" />
-          <StatCard icon={FolderTree} title="Maximum Depth" value={stats.maxDepth} color="from-emerald-500 to-emerald-600" />
-          
+          <StatCard
+            icon={BarChart3}
+            title="Total Nodes"
+            value={stats.totalNodes}
+            color="from-blue-500 to-blue-600"
+          />
+          <StatCard
+            icon={FolderTree}
+            title="Maximum Depth"
+            value={stats.maxDepth}
+            color="from-emerald-500 to-emerald-600"
+          />
         </div>
 
         {/* Search */}
@@ -239,16 +281,21 @@ function Menu1() {
                 </h2>
                 <p className="text-gray-600 text-sm mt-1">Interactive tree view of your assets</p>
               </div>
-
               <div className="p-6">
                 {loading ? (
                   <div className="flex items-center justify-center h-96">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                   </div>
                 ) : treeData.length > 0 ? (
-                  <RenderTress treeData={filterTree(treeData, SearchTerm)} onSuccess={onSuccessHandler} SearchTerm={SearchTerm}
-                   setShowOverlay={setShowOverlay} setSelectedNode={setSelectedNode} setOverlayMode={setOverlayMode}
-                   />
+                  <RenderTress
+                    treeData={filterTree(treeData, SearchTerm)}
+                    onSuccess={onSuccessHandler}
+                    SearchTerm={SearchTerm}
+                    setShowOverlay={setShowOverlay}
+                    setSelectedNode={setSelectedNode}
+                    setOverlayMode={setOverlayMode}
+                    userRole={userRole}
+                  />
                 ) : (
                   <div className="text-center py-12">
                     <FolderTree className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -268,8 +315,7 @@ function Menu1() {
                 <Upload className="w-5 h-5 mr-2 text-blue-600" />
                 File Management
               </h3>
-              <FileUpload onFileChange={handleFileChange} />
-
+              {userRole === "Admin" ? <FileUpload onFileChange={handleFileChange} /> : <div></div>}
               <button
                 onClick={handleDownload}
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 font-medium"
@@ -279,41 +325,42 @@ function Menu1() {
               </button>
             </div>
 
-            {/* Node Operations */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Node Operations</h3>
-
-              <div className="space-y-3">
-                <button
-                  onClick={() => setOpenAdd(!openAdd)}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Node</span>
-                </button>
-
-                <button
-                  onClick={() => setOpenDelete(!openDelete)}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span>Delete Node</span>
-                </button>
+            {userRole === "Admin" ? (
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Node Operations</h3>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => setOpenAdd(!openAdd)}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Node</span>
+                  </button>
+                  <button
+                    onClick={() => setOpenDelete(!openDelete)}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Delete Node</span>
+                  </button>
+                </div>
+                {openAdd && <AddForm onSuccess={onSuccessHandler} />}
+                {openDelete && <AddForm onSuccess={onSuccessHandler} treeData={treeData} />}
               </div>
-
-              {openAdd && <AddForm onSuccess={onSuccessHandler} />}
-              {openDelete && <DeleteForm onSuccess={onSuccessHandler} treeData={treeData} />}
-            </div>
+            ) : (
+              <div></div>
+            )}
           </div>
         </div>
       </div>
-    <SignalOverlay
-  show={showOverlay}
-  node={selectedNode}
-  mode={overlayMode}               // add / edit
-  onClose={() => setShowOverlay(false)}
-  onSuccess={onSuccessHandler}     // refresh after save
-/>
+
+      <SignalOverlay
+        show={showOverlay}
+        node={selectedNode}
+        mode={overlayMode}
+        onClose={() => setShowOverlay(false)}
+        onSuccess={onSuccessHandler}
+      />
     </div>
   );
 }

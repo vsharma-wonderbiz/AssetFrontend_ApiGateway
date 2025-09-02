@@ -8,7 +8,7 @@ import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import { useNavigate } from "react-router-dom";
 
-const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,setSelectedNode,setOverlayMode }) => {
+const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,setSelectedNode,setOverlayMode,userRole }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [AddSignal,setAddSignal] = useState(false);
   const [DisplaySignals,setDisplaySignals] = useState(false);
@@ -124,7 +124,8 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
 
       {/* Context Menu */}
       <Menu id={`menu_${node.id}`}>
-         <Item onClick={handleAddSignal}>Add Signal</Item>
+        {userRole==="Admin" ?<Item onClick={handleAddSignal}>Add Signal</Item>:<div></div>}
+         
          <Item onClick={handleDisplaySignals}>Display Signals</Item>
       </Menu>
 
@@ -153,6 +154,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
               setSelectedNode={setSelectedNode}
               setShowOverlay={setShowOverlay}
               setOverlayMode={setOverlayMode}
+              userRole={userRole}
             />
           ))}
         </ul>
