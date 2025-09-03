@@ -1,356 +1,8 @@
-  // import React from "react";
-  // import { toast } from "react-toastify";
-
-  // const SignalOverlay = ({show,node,onClose}) => {
-  //   if (!show || !node) return null; // overlay sirf show state true hone par dikhe
-
-  //   const [formData, setFormData] = React.useState({
-  //     signalName: "",
-  //     valueType: "",
-  //     description: "",
-  //     assetId: node.id,
-  //   });
-
-  //   const handleChange=(e)=>{
-  //     const{name,value}=e.target;
-  //     setFormData(prev=>({...prev,[name]:value}));
-  //   }
-
-  //   const handleSubmit = async (e) => {
-  //     e.preventDefault();
-  //     // Handle form submission
-  //     try{
-  //         const response=await fetch("https://localhost:7285/api/Signals",{
-  //             method:"POST",
-  //             headers:{
-  //                 "Content-Type":"application/json"
-  //             },
-  //             body:JSON.stringify(formData)
-  //         });
-  //         if(!response.ok) throw new toast.error("Network response was not ok");
-  //         const data=await response.json();
-  //         console.log("Form submitted successfully:", data);
-  //         toast.success("Form submitted successfully!");
-  //     }catch(error){
-  //         toast.error("Error submitting form:" + error);
-  //     }
-
-  //     onClose();
-  //   };
-
-  //   return (
-  //     <div className="fixed inset-0 bg-gray-300 bg-opacity-40 flex items-center justify-center z-50">
-  //       <div className="bg-white rounded-lg p-6 w-1/2 shadow-lg">
-  //         <h2 className="text-xl font-bold mb-4">Add Signal for: {node.name}</h2>
-
-  //         <form>
-  //           <div className="mb-2">
-  //             <label className="block font-medium">Signal Name:</label>
-  //             <input 
-  //               type="text" 
-  //               name="signalName"
-  //               value={formData.signalName}
-  //               onChange={handleChange}
-  //               className="w-full border px-2 py-1 rounded" 
-  //               placeholder="Enter signal name"
-  //             />
-  //           </div>
-
-  //           <div className="mb-2">
-  //             <label className="block font-medium">Value Type:</label>
-  //             <input 
-  //               type="text" 
-  //               name="valueType"
-  //               value={formData.valueType}
-  //               onChange={handleChange}
-  //               className="w-full border px-2 py-1 rounded" 
-  //               placeholder="Enter value type"
-  //             />
-  //           </div>
-
-  //           <div className="mb-4">
-  //             <label className="block font-medium">Description:</label>
-  //             <textarea 
-  //               className="w-full border px-2 py-1 rounded" 
-  //               name="description"
-  //               value={formData.description}
-  //               onChange={handleChange}
-  //               placeholder="Enter description"
-  //             />
-  //           </div>
-
-  //           <div className="mb-4">
-  //             <label className="block font-medium">Asset Id:</label>
-  //             <input 
-  //               type="text" 
-  //               value={node.id}
-  //               className="w-full border px-2 py-1 rounded" 
-  //               placeholder="Enter value type"
-  //             />
-  //           </div>
-
-  //           <div className="flex justify-end space-x-2">
-  //             <button 
-  //               type="button" 
-  //               className="px-4 py-2 bg-gray-300 rounded" 
-  //               onClick={onClose}
-  //             >
-  //               Cancel
-  //             </button>
-  //             <button 
-  //               type="submit" 
-  //               className="px-4 py-2 bg-blue-500 text-white rounded"
-  //               onClick={handleSubmit}
-              
-  //             >
-  //               Add
-  //             </button>
-  //           </div>
-  //         </form>
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
-  // export default SignalOverlay;
-
-
-
-
-
-
-//   import React from "react";
-// import { toast } from "react-toastify";
-
-// const SignalOverlay = ({ show, node, onClose }) => {
-//   if (!show || !node) return null;
-
-//   const [formData, setFormData] = React.useState({
-//     signalName: "",
-//     valueType: "",
-//     description: "",
-//     assetId: node.id,
-//   });
-
-//   const [errors, setErrors] = React.useState({});
-//   const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-//   const validateForm = () => {
-//     const newErrors = {};
-//     let isValid = true;
-
-//     // Validate Signal Name
-//     if (formData.signalName === "") {
-//       newErrors.signalName = 'Signal Name cannot be empty';
-//       isValid = false;
-//     } else if (!/^[a-zA-Z\s]*$/.test(formData.signalName)) {
-//       newErrors.signalName = 'Signal Name can only contain letters and spaces';
-//       isValid = false;
-//     } else if (formData.signalName.trim().length < 3) {
-//       newErrors.signalName = 'Signal Name must be at least 3 characters long';
-//       isValid = false;
-//     } else if (formData.signalName.trim().length > 50) {
-//       newErrors.signalName = 'Signal Name must not exceed 50 characters';
-//       isValid = false;
-//     }
-
-//     // Validate Value Type
-//     if (formData.valueType === "") {
-//       newErrors.valueType = 'Value Type cannot be empty';
-//       isValid = false;
-//     } else if (!["int", "real"].includes(formData.valueType)) {
-//       newErrors.valueType = 'Value Type must be exactly "int" or "real"';
-//       isValid = false;
-//     }
-
-//     // Validate Description
-//     if (formData.description === "") {
-//       newErrors.description = 'Description cannot be empty';
-//       isValid = false;
-//     } else if (!/^[a-zA-Z0-9\s.,_-]*$/.test(formData.description)) {
-//       newErrors.description = 'Description can only contain letters, numbers, spaces, and basic punctuation (. , - _)';
-//       isValid = false;
-//     } else if (formData.description.trim().length < 5) {
-//       newErrors.description = 'Description must be at least 5 characters long';
-//       isValid = false;
-//     } else if (formData.description.trim().length > 200) {
-//       newErrors.description = 'Description must not exceed 200 characters';
-//       isValid = false;
-//     }
-
-//     setErrors(newErrors);
-//     return isValid;
-//   };
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData(prev => ({ ...prev, [name]: value }));
-    
-//     // Clear specific field error when user starts typing
-//     if (errors[name]) {
-//       setErrors(prev => ({ ...prev, [name]: "" }));
-//     }
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-    
-//     // Run validation
-//     if (!validateForm()) {
-//       console.log("Validation failed:", errors);
-//       return;
-//     }
-    
-//     setIsSubmitting(true);
-    
-//     try {
-//       const response = await fetch("https://localhost:7285/api/Signals", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({
-//           ...formData,
-//           signalName: formData.signalName.trim(),
-//           description: formData.description.trim()
-//         })
-//       });
-      
-//       if (!response.ok) {
-//         throw new Error("Network response was not ok");
-//       }
-      
-//       const data = await response.json();
-//       console.log("Form submitted successfully:", data);
-//       toast.S("Signal added successfully!");
-      
-//       // Reset form
-//       setFormData({
-//         signalName: "",
-//         valueType: "",
-//         description: "",
-//         assetId: node.id,
-//       });
-//       setErrors({});
-//       onClose();
-      
-//     } catch (error) {
-//       console.error("Error submitting form:", error);
-//       alert("Error submitting form: " + error.message);
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
-
-//   return (
-//     <div className="fixed inset-0 bg-gray-300 bg-opacity-40 flex items-center justify-center z-50">
-//       <div className="bg-white rounded-lg p-6 w-1/2 shadow-lg">
-//         <h2 className="text-xl font-bold mb-4">Add Signal for: {node.name}</h2>
-
-//         <div>
-//           <div className="mb-2">
-//             <label className="block font-medium">Signal Name:</label>
-//             <input
-//               type="text"
-//               name="signalName"
-//               value={formData.signalName}
-//               onChange={handleChange}
-//               className={`w-full border px-2 py-1 rounded ${errors.signalName ? 'border-red-500' : ''}`}
-//               placeholder="Enter signal name"
-//               disabled={isSubmitting}
-//             />
-//             {errors.signalName && (
-//               <div className="text-red-500 text-sm mt-1">{errors.signalName}</div>
-//             )}
-//           </div>
-
-//           <div className="mb-2">
-//             <label className="block font-medium">Value Type:</label>
-//             <select
-//               name="valueType"
-//               value={formData.valueType}
-//               onChange={handleChange}
-//               className={`w-full border px-2 py-1 rounded ${errors.valueType ? 'border-red-500' : ''}`}
-//               disabled={isSubmitting}
-//             >
-//               <option value="">Select value type</option>
-//               <option value="int">int</option>
-//               <option value="real">real</option>
-//             </select>
-//             {errors.valueType && (
-//               <div className="text-red-500 text-sm mt-1">{errors.valueType}</div>
-//             )}
-//             <div className="text-gray-500 text-xs mt-1">
-//               Choose 'int' for whole numbers or 'real' for decimal numbers
-//             </div>
-//           </div>
-
-//           <div className="mb-4">
-//             <label className="block font-medium">Description (Optional):</label>
-//             <textarea
-//               className={`w-full border px-2 py-1 rounded ${errors.description ? 'border-red-500' : ''}`}
-//               name="description"
-//               value={formData.description}
-//               onChange={handleChange}
-//               placeholder="Enter description (optional)"
-//               disabled={isSubmitting}
-//               rows="3"
-//             />
-//             {errors.description && (
-//               <div className="text-red-500 text-sm mt-1">{errors.description}</div>
-//             )}
-//             <div className="text-gray-500 text-xs mt-1">
-//               {formData.description.length}/200 characters
-//             </div>
-//           </div>
-
-//           <div className="mb-4">
-//             <label className="block font-medium">Asset Id:</label>
-//             <input
-//               type="text"
-//               value={node.id}
-//               className="w-full border px-2 py-1 rounded bg-gray-100"
-//               placeholder="Asset ID"
-//               disabled
-//             />
-//           </div>
-
-//           <div className="flex justify-end space-x-2">
-//             <button
-//               type="button"
-//               className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition-colors"
-//               onClick={onClose}
-//               disabled={isSubmitting}
-//             >
-//               Cancel
-//             </button>
-//             <button
-//               type="button"
-//               className={`px-4 py-2 rounded text-white transition-colors ${
-//                 isSubmitting 
-//                   ? 'bg-blue-400 cursor-not-allowed' 
-//                   : 'bg-blue-500 hover:bg-blue-600'
-//               }`}
-//               onClick={handleSubmit}
-//               disabled={isSubmitting}
-//             >
-//               {isSubmitting ? 'Adding...' : 'Add'}
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default SignalOverlay;
-
-  
-
 import React from "react";
 import { toast } from "react-toastify";
+import { X, Signal, Database, FileText, Settings, Save, XCircle } from "lucide-react";
 
-const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpdate }) => {
+const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpdate,token }) => {
   if (!show || !node) return null;
 
   const [formData, setFormData] = React.useState({
@@ -363,7 +15,7 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
   const [errors, setErrors] = React.useState({});
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // ✅ Prefill data in edit mode
+ 
   React.useEffect(() => {
     if (mode === "edit" && signal) {
       setFormData({
@@ -435,6 +87,31 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
     }
   };
 
+  
+  const parseErrorMessage = (error, response = null) => {
+    
+    if (response && response.message) {
+      return response.message;
+    }
+    
+   
+    if (error.response && error.response.message) {
+      return error.response.message;
+    }
+    
+    
+    if (typeof error === 'string') {
+      return error;
+    }
+    
+    if (error.message) {
+      return error.message;
+    }
+    
+    
+    return "An unexpected error occurred. Please try again.";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -451,7 +128,10 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
 
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          // "Content-Type": "application/json"
+         },
         body: JSON.stringify({
           ...formData,
           signalName: formData.signalName.trim(),
@@ -459,9 +139,31 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
         }),
       });
 
-      if (!response.ok) throw new Error("Network response was not ok");
+      // ✅ Handle both success and error responses properly
+      if (!response.ok) {
+        let errorMessage = "An error occurred";
+        
+        try {
+          // Try to parse JSON error response
+          const errorData = await response.json();
+          errorMessage = parseErrorMessage(errorData, errorData);
+        } catch (jsonError) {
+          // If JSON parsing fails, try to get text
+          try {
+            const errorText = await response.text();
+            errorMessage = errorText || `HTTP ${response.status}: ${response.statusText}`;
+          } catch (textError) {
+            errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+          }
+        }
+        
+        toast.error(errorMessage);
+        return; // Exit early on error
+      }
 
+      // ✅ Handle successful response
       const data = await response.json();
+
       if (mode === "edit") {
         toast.success("Signal updated successfully!");
         if (onUpdate) onUpdate(data);
@@ -471,102 +173,203 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
       }
 
       onClose();
+
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error: the signal already exists in asset" );
+      
+      // ✅ Handle different types of network/fetch errors
+      let errorMessage = "Failed to connect to server. Please check your connection.";
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        errorMessage = "Network error: Unable to connect to server";
+      } else if (error.name === 'AbortError') {
+        errorMessage = "Request was cancelled";
+      } else {
+        errorMessage = parseErrorMessage(error);
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-300 bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-1/2 shadow-lg">
-        <h2 className="text-xl font-bold mb-4">
-          {mode === "edit" ? `Edit Signal: ${signal?.signalId}` : `Add Signal for: ${node.name}`}
-        </h2>
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      {/* Click outside to close */}
+      <div 
+        className="absolute inset-0" 
+        onClick={onClose}
+        aria-label="Close modal"
+      ></div>
+      
+      {/* Modal Content */}
+      <div className="relative bg-white/95 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl w-full max-w-2xl mx-auto transform transition-all duration-300">
 
-        {/* Signal Name */}
-        <div className="mb-2">
-          <label className="block font-medium">Signal Name:</label>
-          <input
-            type="text"
-            name="signalName"
-            value={formData.signalName}
-            onChange={handleChange}
-            className={`w-full border px-2 py-1 rounded ${errors.signalName ? 'border-red-500' : ''}`}
-            placeholder="Enter signal name"
-            disabled={isSubmitting}
-          />
-          {errors.signalName && <div className="text-red-500 text-sm mt-1">{errors.signalName}</div>}
+
+        {/* Form Content */}
+        <div className="p-8 space-y-8">
+          {/* Signal Name */}
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-slate-700 font-semibold text-sm">
+              <Signal className="h-4 w-4 text-slate-500" />
+              Signal Name
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                name="signalName"
+                value={formData.signalName}
+                onChange={handleChange}
+                className={`w-full px-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/70 backdrop-blur-sm placeholder-slate-400 ${
+                  errors.signalName 
+                    ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500' 
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+                placeholder="Enter a descriptive signal name"
+                disabled={isSubmitting}
+              />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400">
+                <span className="text-xs">
+                  {formData.signalName.length}/50
+                </span>
+              </div>
+            </div>
+            {errors.signalName && (
+              <p className="text-red-600 text-sm flex items-center gap-2" role="alert">
+                <div className="w-1 h-1 bg-red-500 rounded-full"></div>
+                {errors.signalName}
+              </p>
+            )}
+          </div>
+
+          {/* Value Type */}
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-slate-700 font-semibold text-sm">
+              <Database className="h-4 w-4 text-slate-500" />
+              Value Type
+            </label>
+            <div className="relative">
+              <select
+                name="valueType"
+                value={formData.valueType}
+                onChange={handleChange}
+                className={`w-full px-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/70 backdrop-blur-sm appearance-none cursor-pointer ${
+                  errors.valueType 
+                    ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500' 
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+                disabled={isSubmitting}
+              >
+                <option value="" className="text-slate-400">Select data type</option>
+                <option value="int">Integer (int)</option>
+                <option value="real">Real Number (real)</option>
+              </select>
+              {/* Custom dropdown arrow */}
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </div>
+            {errors.valueType && (
+              <p className="text-red-600 text-sm flex items-center gap-2" role="alert">
+                <div className="w-1 h-1 bg-red-500 rounded-full"></div>
+                {errors.valueType}
+              </p>
+            )}
+          </div>
+
+          {/* Description */}
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-slate-700 font-semibold text-sm">
+              <FileText className="h-4 w-4 text-slate-500" />
+              Description
+            </label>
+            <div className="relative">
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                className={`w-full px-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/70 backdrop-blur-sm placeholder-slate-400 resize-none ${
+                  errors.description 
+                    ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500' 
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+                placeholder="Provide a detailed description of this signal's purpose and functionality"
+                disabled={isSubmitting}
+                rows="4"
+              />
+              <div className="absolute right-3 bottom-3 text-slate-400">
+                <span className="text-xs">
+                  {formData.description.length}/200
+                </span>
+              </div>
+            </div>
+            {errors.description && (
+              <p className="text-red-600 text-sm flex items-center gap-2" role="alert">
+                <div className="w-1 h-1 bg-red-500 rounded-full"></div>
+                {errors.description}
+              </p>
+            )}
+          </div>
+
+          {/* Asset ID (Read-only) */}
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-slate-700 font-semibold text-sm">
+              <Settings className="h-4 w-4 text-slate-500" />
+              Asset ID
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={`Asset ID: ${node.id}`}
+                className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50/80 text-slate-600 cursor-not-allowed"
+                disabled
+                readOnly
+              />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <div className="px-2 py-1 bg-slate-200 text-slate-600 text-xs rounded-md">
+                  Read-only
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Value Type */}
-        <div className="mb-2">
-          <label className="block font-medium">Value Type:</label>
-          <select
-            name="valueType"
-            value={formData.valueType}
-            onChange={handleChange}
-            className={`w-full border px-2 py-1 rounded ${errors.valueType ? 'border-red-500' : ''}`}
-            disabled={isSubmitting}
-          >
-            <option value="">Select value type</option>
-            <option value="int">int</option>
-            <option value="real">real</option>
-          </select>
-          {errors.valueType && <div className="text-red-500 text-sm mt-1">{errors.valueType}</div>}
-        </div>
-
-        {/* Description */}
-        <div className="mb-4">
-          <label className="block font-medium">Description:</label>
-          <textarea
-            className={`w-full border px-2 py-1 rounded ${errors.description ? 'border-red-500' : ''}`}
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Enter description"
-            disabled={isSubmitting}
-            rows="3"
-          />
-          {errors.description && <div className="text-red-500 text-sm mt-1">{errors.description}</div>}
-        </div>
-
-        {/* Asset ID */}
-        <div className="mb-4">
-          <label className="block font-medium">Asset Id:</label>
-          <input
-            type="text"
-            value={node.id}
-            className="w-full border px-2 py-1 rounded bg-gray-100"
-            disabled
-          />
-        </div>
-
-        {/* Buttons */}
-        <div className="flex justify-end space-x-2">
+        {/* Footer Actions */}
+        <div className="flex items-center justify-end gap-4 p-8 border-t border-slate-200/50 bg-slate-50/50 rounded-b-2xl">
           <button
             type="button"
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition-colors"
+            className="px-6 py-3 border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-200 font-semibold flex items-center gap-2 group"
             onClick={onClose}
             disabled={isSubmitting}
           >
+            <XCircle className="h-4 w-4 group-hover:text-slate-500 transition-colors" />
             Cancel
           </button>
+          
           <button
             type="button"
-            className={`px-4 py-2 rounded text-white transition-colors ${
+            className={`px-6 py-3 rounded-xl text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2 ${
               isSubmitting
-                ? 'bg-blue-400 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600'
+                ? 'bg-slate-400 cursor-not-allowed hover:transform-none'
+                : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
             }`}
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
-            {isSubmitting
-              ? mode === "edit" ? "Updating..." : "Adding..."
-              : mode === "edit" ? "Update" : "Add"}
+            {isSubmitting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                {mode === "edit" ? "Updating..." : "Adding..."}
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                {mode === "edit" ? "Update Signal" : "Add Signal"}
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -574,7 +377,7 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
   );
 };
 
-export default SignalOverlay;
+export default SignalOverlay; 
 
 
 

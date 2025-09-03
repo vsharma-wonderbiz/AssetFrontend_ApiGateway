@@ -1,7 +1,7 @@
 import React from "react";
 import TreeNode from "./Treenode";
 
-const RenderTress=({treeData , onSuccess,SearchTerm,setShowOverlay,setSelectedNode,setOverlayMode,userRole})=>{
+const RenderTress=({treeData , onSuccess,SearchTerm,setShowOverlay,setSelectedNode,setOverlayMode,userRole,token})=>{
 
 
   // console.log("the data getting ",treeData);  
@@ -18,6 +18,7 @@ const RenderTress=({treeData , onSuccess,SearchTerm,setShowOverlay,setSelectedNo
                    setSelectedNode={setSelectedNode}
                    setOverlayMode={setOverlayMode}
                    userRole={userRole}
+                   token={token}
                    />
               ))}
             </ul>

@@ -8,7 +8,7 @@ import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import { useNavigate } from "react-router-dom";
 
-const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,setSelectedNode,setOverlayMode,userRole }) => {
+const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,setSelectedNode,setOverlayMode,userRole,token }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [AddSignal,setAddSignal] = useState(false);
   const [DisplaySignals,setDisplaySignals] = useState(false);
@@ -48,6 +48,10 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
     try {
       const res = await fetch(`https://localhost:7285/api/Asset/${node.id}`, {
         method: "DELETE",
+         headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       });
 
       if (!res.ok) throw new Error("Failed to delete node");
@@ -77,12 +81,12 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
     });
   };
 
-  // Separate handlers for different menu actions
+
   const handleAddSignal = () => {
     setShowOverlay(true);
      setOverlayMode("add");   
     setSelectedNode(node);
-    // You can implement the actual logic here later
+  
   };
 
   const handleDisplaySignals=()=>{
@@ -90,7 +94,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
       navigate("/display-signals",{state:node})
   }
     
-    // You can implement the actual logic here later
+   
  
 
   return (
@@ -117,8 +121,27 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
         </div>
 
         <div className="flex items-center space-x-2">
-          <ContentCopyIcon className="cursor-pointer" onClick={(e) => { e.stopPropagation(); copyID(); }} />
-          <DeleteIcon className="cursor-pointer" onClick={(e) => { e.stopPropagation(); setOpenDialog(true); }} />
+          {userRole === "Admin" && (
+  <div className="flex items-center gap-2">
+    <ContentCopyIcon
+      className="cursor-pointer"
+      onClick={(e) => {
+        e.stopPropagation();
+        copyID();
+      }}
+      title="Copy ID"
+    />
+
+    <DeleteIcon
+      className="cursor-pointer"
+      onClick={(e) => {
+        e.stopPropagation();
+        setOpenDialog(true);
+      }}
+      title="Delete"
+    />
+  </div>
+)}
         </div>
       </div>
 

@@ -78,7 +78,7 @@ const AddForm = ({ onSuccess }) => {
           : null,
       };
 
-      await axios.post('https://localhost:7285/api/asset', payload ,{
+      await axios.post('https://localhost:7285/api/asset/Add', payload ,{
         headers:{
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"

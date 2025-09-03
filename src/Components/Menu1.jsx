@@ -1,5 +1,7 @@
+
+
 import React, { useState, useEffect } from "react";
-import { Upload, Plus, Trash2, Download, Search, BarChart3, FolderTree, Activity } from "lucide-react";
+import { Upload, Plus, Trash2, Download, Search, BarChart3, FolderTree, Activity, Info, MousePointer, Eye, Settings } from "lucide-react";
 import AddForm from "./AddForm";
 import RenderTress from "./RenderTress";
 import Search2 from "./Search2";
@@ -92,6 +94,116 @@ const StatCard = ({ icon: Icon, title, value, color }) => (
   </div>
 );
 
+// Instructions Card Component
+const InstructionsCard = ({ userRole }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-lg border border-blue-200 overflow-hidden">
+      <div 
+        className="p-4 cursor-pointer hover:bg-blue-100/50 transition-colors"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Info className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-blue-900">How to Use</h3>
+              <p className="text-blue-700 text-sm">Click to view instructions</p>
+            </div>
+          </div>
+          <div className={`transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      {isExpanded && (
+        <div className="px-4 pb-4">
+          <div className="bg-white rounded-lg p-4 space-y-4">
+            <div className="border-b border-gray-200 pb-3">
+              <h4 className="font-semibold text-gray-900 flex items-center mb-2">
+                <MousePointer className="w-4 h-4 mr-2 text-blue-600" />
+                Right-Click Options
+              </h4>
+              <p className="text-sm text-gray-600 mb-3">
+                Right-click on any node in the tree to access these options:
+              </p>
+            </div>
+            
+            {userRole === "Admin" ? (
+              <div className="space-y-3">
+                <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <Settings className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h5 className="font-medium text-green-900">Add Signal</h5>
+                    <p className="text-sm text-green-700">
+                      Right-click on any node → Select "Add Signal" to create new signals for that asset
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <Eye className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h5 className="font-medium text-blue-900">Display Signals</h5>
+                    <p className="text-sm text-blue-700">
+                      Right-click on any node → Select "Display Signals" to view all signals for that asset
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-amber-800">Admin Access</span>
+                  </div>
+                  <p className="text-xs text-amber-700 mt-1">
+                    You have full access to add and manage signals across all nodes
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <Eye className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h5 className="font-medium text-blue-900">Display Signals</h5>
+                    <p className="text-sm text-blue-700">
+                      Right-click on any node → Select "Display Signals" to view all signals for that asset
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-gray-800">User Access</span>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1">
+                    You can view signals but cannot add or modify them
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <p className="text-xs text-gray-500 flex items-center">
+                <Info className="w-3 h-3 mr-1" />
+                Tip: Look for the right-click cursor when hovering over nodes
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 function Menu1() {
   const [treeData, setTreeData] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
@@ -104,21 +216,48 @@ function Menu1() {
   const [overlayMode, setOverlayMode] = useState("add");
   const [userRole, setUserRole] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName,setUserName]=useState();
 
   const navigate=useNavigate();
+  const token=localStorage.getItem("token");
+
+ useEffect(() => {
+  const checkUser = () => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      try {
+        const parsedUser = JSON.parse(user);
+        setUserRole(parsedUser.role);
+        setUserName(parsedUser.username);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Error parsing user from localStorage:", error);
+        setUserRole(null);
+        setUserName("");
+        setIsLoggedIn(false);
+      }
+    } else {
+      setUserRole(null);
+      setUserName("");
+      setIsLoggedIn(false);
+    }
+  };
+
+  checkUser();
+  window.addEventListener("storage", checkUser);
+
+  return () => window.removeEventListener("storage", checkUser);
+}, []);
+
+ console.log(userName)
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const decoded = jwtDecode(token);
-      console.log("Decoded:", decoded);
-      const Role = decoded.role || decoded.Role || decoded.userRole;
-      setUserRole(Role);
-    }else {
-    setIsLoggedIn(false);
-    setUserRole(null);
-  }
+    fetchHierarchy();
+    fetchStatistics();
   }, []);
+
 
   useEffect(() => {
     fetchHierarchy();
@@ -170,6 +309,10 @@ function Menu1() {
     try {
       const res = await fetch("https://localhost:7285/api/Asset/upload", {
         method: "POST",
+        headers:{ 
+          Authorization: `Bearer ${token}`,
+          // "Content-Type": "application/json"
+        },
         body: formData,
       });
       if (!res.ok) throw new Error("Upload failed");
@@ -208,6 +351,12 @@ function Menu1() {
       .filter(Boolean);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    setUserRole(null);
+    navigate("/Register");
+  };
 
 
   console.log("Selected Node in Menu1:", selectedNode);
@@ -231,12 +380,23 @@ function Menu1() {
             <div className="flex items-center space-x-2 text-sm text-gray-500">
               <Activity className="w-4 h-4" />
           {isLoggedIn ? (
-               <button
-                  onClick={handleLogout}
-                   className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-                >
-                      Logout
-               </button>
+              <div className="flex items-center space-x-4 bg-gray-100 px-4 py-2 rounded-full shadow-sm">
+  {/* User Avatar / Initial */}
+  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold uppercase">
+    {userName ? userName[0] : "U"}
+  </div>
+
+  {/* Username */}
+  <span className="text-gray-800 font-medium text-lg">{userName}</span>
+
+  {/* Logout Button */}
+  <button
+    onClick={handleLogout}
+    className="ml-auto bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-full font-medium transition-all duration-200 shadow hover:shadow-lg"
+  >
+    Logout
+  </button>
+</div>
               ) : (
               <button
                 onClick={() => navigate("/Register")}
@@ -267,6 +427,13 @@ function Menu1() {
           />
         </div>
 
+        {/* Instructions Card */}
+        {isLoggedIn && (
+          <div className="mb-6">
+            <InstructionsCard userRole={userRole} />
+          </div>
+        )}
+
         {/* Search */}
         <Search2 SearchTerm={SearchTerm} SetSearchTerm={SetSearchTerm} />
 
@@ -295,6 +462,7 @@ function Menu1() {
                     setSelectedNode={setSelectedNode}
                     setOverlayMode={setOverlayMode}
                     userRole={userRole}
+                    token={token}
                   />
                 ) : (
                   <div className="text-center py-12">
@@ -336,15 +504,8 @@ function Menu1() {
                     <Plus className="w-4 h-4" />
                     <span>Add Node</span>
                   </button>
-                  <button
-                    onClick={() => setOpenDelete(!openDelete)}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span>Delete Node</span>
-                  </button>
                 </div>
-                {openAdd && <AddForm onSuccess={onSuccessHandler} />}
+                {openAdd && <AddForm onSuccess={onSuccessHandler} token={token}/>}
                 {openDelete && <AddForm onSuccess={onSuccessHandler} treeData={treeData} />}
               </div>
             ) : (
@@ -360,6 +521,7 @@ function Menu1() {
         mode={overlayMode}
         onClose={() => setShowOverlay(false)}
         onSuccess={onSuccessHandler}
+        token={token}
       />
     </div>
   );

@@ -7,23 +7,23 @@ const Search = ({ Data }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [resultNode, setResultNode] = useState(null);
 
-  // Simplified function to convert string to lowercase
+
   const normalizeString = (str) => {
     return str.toLowerCase().trim();
   };
 
-  // Recursive search function that searches through all levels
+
   const searchNode = (node, keyword) => {
     const nodeName = normalizeString(node.name);
     const searchKey = normalizeString(keyword);
 
     if (nodeName.includes(searchKey)) {
-      return node; // Return original node, not modified
+      return node; 
     }
 
     if (!node.children || node.children.length === 0) return null;
 
-    // Search through all children recursively
+   
     for (let child of node.children) {
       const found = searchNode(child, keyword);
       if (found) return found;
@@ -32,7 +32,7 @@ const Search = ({ Data }) => {
     return null;
   };
 
-  // Alternative: Search and return ALL matching nodes (not just first match)
+ 
   const searchAllNodes = (nodes, keyword) => {
     const results = [];
     
@@ -60,16 +60,14 @@ const Search = ({ Data }) => {
       return;
     }
 
-    // Option 1: Find first matching node (including nested ones)
+    
     let foundNode = null;
     for (let rootNode of treeData) {
       foundNode = searchNode(rootNode, searchKeyword);
       if (foundNode) break;
     }
     
-    // Option 2: Find ALL matching nodes (uncomment to use this instead)
-    // const allMatches = searchAllNodes(treeData, searchKeyword);
-    // setResultNode(allMatches.length > 0 ? allMatches : null);
+    
     
     setResultNode(foundNode);
     console.log('Search result:', foundNode);
