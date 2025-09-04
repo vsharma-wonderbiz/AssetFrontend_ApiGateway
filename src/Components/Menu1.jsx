@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from "react";
 import { Upload, Plus, Trash2, Download, Search, BarChart3, FolderTree, Activity, Info, MousePointer, Eye, Settings } from "lucide-react";
 import AddForm from "./AddForm";
@@ -8,6 +7,7 @@ import Search2 from "./Search2";
 import SignalOverlay from "./SignalOverlay";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // File Upload Component
 const FileUpload = ({ onFileChange }) => {
@@ -315,12 +315,24 @@ function Menu1() {
         },
         body: formData,
       });
-      if (!res.ok) throw new Error("Upload failed");
-      alert("File uploaded successfully!");
-      onSuccessHandler();
-    } catch (err) {
-      console.error("Error uploading file:", err);
-      alert("Failed to upload file");
+      // if (!res.ok) throw new Error("Upload failed");
+      // // toast.success("File uploaded successfully!");
+      // // onSuccessHandler();
+
+      // const errorData = await <res className="text"></res>().catch(() => null);
+      // toast.error(errorData?.error || "Failed upload");
+    } catch (error) {
+      
+      // alert("Failed to upload file");
+      // toast.error(err);
+      // toast.error(err.data.message);  
+      
+      if(error.response){
+        toast.success(error.response.data || error.response.data.error || "Upload failed")
+      }
+      else {
+         alert("Something went wrong: " + error.message);
+      }
     }
   };
 

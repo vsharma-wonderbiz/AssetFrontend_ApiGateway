@@ -50,7 +50,7 @@ const AddForm = ({ onSuccess }) => {
     return isValid;
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e) => {   
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -62,43 +62,92 @@ const AddForm = ({ onSuccess }) => {
     }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!validateForm()) {
+  //     return;
+  //   }
+    
+  //   setIsSubmitting(true);
+    
+  //   try {
+  //     const payload = {
+  //       name: formData.name.trim(),
+  //       parentAssetId: formData.parentAssetId
+  //         ? Number(formData.parentAssetId)
+  //         : null,
+  //     };
+
+  //     await axios.post('https://localhost:7285/api/asset/Add', payload ,{
+  //       headers:{
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json"
+  //       }
+  //     });
+  //     toast.success('Asset added successfully!');
+
+  //     if (onSuccess) {
+  //       onSuccess();
+  //     }
+
+  //     setFormData({ name: '', parentAssetId: '' });
+  //     setErrors({ name: '', parentAssetId: '' });
+  //   } catch (error) {
+  //     console.error('Error submitting data:', error);
+  //     toast.error(error.response?.data?.message || 'Failed to add asset');
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-      const payload = {
-        name: formData.name.trim(),
-        parentAssetId: formData.parentAssetId
-          ? Number(formData.parentAssetId)
-          : null,
-      };
+  e.preventDefault();
+  
+  if (!file) {
+    toast.error('Please select a file');
+    return;
+  }
 
-      await axios.post('https://localhost:7285/api/asset/Add', payload ,{
-        headers:{
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-      toast.success('Asset added successfully!');
+  setIsSubmitting(true);
+  
+  const formData = new FormData();
+  formData.append('file', file);
 
-      if (onSuccess) {
-        onSuccess();
+  try {
+    await axios.post('https://localhost:7285/api/upload', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       }
-
-      setFormData({ name: '', parentAssetId: '' });
-      setErrors({ name: '', parentAssetId: '' });
-    } catch (error) {
-      console.error('Error submitting data:', error);
-      toast.error(error.response?.data?.message || 'Failed to add asset');
-    } finally {
-      setIsSubmitting(false);
+    });
+    
+    toast.success('File added successfully');
+    
+  } catch (error) {
+    // Extract error message from backend BadRequest responses
+    let errorMessage = 'Upload failed';
+    
+    if (error.response?.data) {
+      // Handle string responses (your BadRequest messages)
+      if (typeof error.response.data === 'string') {
+        errorMessage = error.response.data;
+      }
+      // Handle object responses (like { message: "..." })
+      else if (error.response.data.message) {
+        errorMessage = error.response.data.message;
+      }
+      else if (error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+    } else {
+      errorMessage = error.message;
     }
-  };
+    
+    console.log(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const clearForm = () => {
     setFormData({ name: '', parentAssetId: '' });
