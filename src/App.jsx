@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import SignalsTable from './Components/SignalsTable.jsx';
 import AuthForm from './Components/AuthFrom.jsx';
+import ErrorPage from './Components/ErrorPage.jsx';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/Dashboard" element={<Menu1 />} />
           <Route path="/display-signals" element={<SignalsTable />} />
           <Route path="/Register" element={<AuthForm />} />
+          <Route path="/fileError" element={<ErrorPage/>}/>
         </Routes>
       </Router>
     </>

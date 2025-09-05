@@ -217,6 +217,7 @@ function Menu1() {
   const [userRole, setUserRole] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName,setUserName]=useState();
+    const [fileerrors, setfileErrors] = useState([]);
 
   const navigate=useNavigate();
   const token=localStorage.getItem("token");
@@ -296,6 +297,46 @@ function Menu1() {
     await fetchStatistics();
   };
 
+  // const handleFileChange = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) {
+  //     alert("No file selected");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+
+  //   try {
+  //     const res = await fetch("https://localhost:7285/api/Asset/upload", {
+  //       method: "POST",
+  //       headers:{ 
+  //         Authorization: `Bearer ${token}`,
+  //         // "Content-Type": "application/json"
+  //       },
+  //       body: formData,
+  //     });
+  //     // if (!res.ok) throw new Error("Upload failed");
+  //     // // toast.success("File uploaded successfully!");
+  //     // // onSuccessHandler();
+
+  //     // const errorData = await <res className="text"></res>().catch(() => null);
+  //     // toast.error(errorData?.error || "Failed upload");
+  //   } catch (error) {
+      
+  //     // alert("Failed to upload file");
+  //     // toast.error(err);
+  //     // toast.error(err.data.message);  
+      
+  //     if(error.response){
+  //       toast.success(error.response.data || error.response.data.error || "Upload failed")
+  //     }
+  //     else {
+  //        alert("Something went wrong: " + error.message);
+  //     }
+  //   }
+  // };
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) {
@@ -309,31 +350,29 @@ function Menu1() {
     try {
       const res = await fetch("https://localhost:7285/api/Asset/upload", {
         method: "POST",
-        headers:{ 
-          Authorization: `Bearer ${token}`,
-          // "Content-Type": "application/json"
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      // if (!res.ok) throw new Error("Upload failed");
-      // // toast.success("File uploaded successfully!");
-      // // onSuccessHandler();
 
-      // const errorData = await <res className="text"></res>().catch(() => null);
-      // toast.error(errorData?.error || "Failed upload");
+      const data = await res.json();
+
+      if (!res.ok) {
+        // ❌ Store multiple errors
+        // alert("invalid ata types ")
+        setfileErrors(data.errors || []);
+        console.log(fileerrors);
+        // Redirect to error page
+        navigate("/fileError", { state: { errors: data.errors } });
+       
+      } else {
+        // ✅ Success
+        alert(data.message);
+      }
     } catch (error) {
-      
-      // alert("Failed to upload file");
-      // toast.error(err);
-      // toast.error(err.data.message);  
-      
-      if(error.response){
-        toast.success(error.response.data || error.response.data.error || "Upload failed")
-      }
-      else {
-         alert("Something went wrong: " + error.message);
-      }
+      alert("Something went wrong: " + error.message);
     }
+
+     e.target.value = "";
   };
 
   const handleDownload = () => {
