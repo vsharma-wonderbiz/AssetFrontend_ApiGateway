@@ -7,9 +7,9 @@ import { Plus, X, AlertCircle, Check } from 'lucide-react';
 const AddForm = ({ onSuccess }) => {
 
   const token=localStorage.getItem('token');
-  console.log(token);
+  // console.log(token);
   const Loginuser=localStorage.getItem('user');
-  console.log(Loginuser)
+  // console.log(Loginuser)
 
   const [formData, setFormData] = useState({
     name: '',

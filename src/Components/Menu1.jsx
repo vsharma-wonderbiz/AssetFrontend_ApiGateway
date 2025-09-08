@@ -218,6 +218,7 @@ function Menu1() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName,setUserName]=useState();
     const [fileerrors, setfileErrors] = useState([]);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const navigate=useNavigate();
   const token=localStorage.getItem("token");
@@ -252,7 +253,7 @@ function Menu1() {
   return () => window.removeEventListener("storage", checkUser);
 }, []);
 
- console.log(userName)
+//  console.log(userName)
 
   useEffect(() => {
     fetchHierarchy();
@@ -295,6 +296,11 @@ function Menu1() {
   const onSuccessHandler = async () => {
     await fetchHierarchy();
     await fetchStatistics();
+
+      setRefreshTrigger(prev => prev + 1);
+  
+  // console.log("✅ Data refreshed");
+
   };
 
   // const handleFileChange = async (e) => {
@@ -360,7 +366,7 @@ function Menu1() {
         // ❌ Store multiple errors
         // alert("invalid ata types ")
         setfileErrors(data.errors || []);
-        console.log(fileerrors);
+        // console.log(fileerrors);
         // Redirect to error page
         navigate("/fileError", { state: { errors: data.errors } });
        
@@ -410,8 +416,8 @@ function Menu1() {
   };
 
 
-  console.log("Selected Node in Menu1:", selectedNode);
-  console.log("Show Overlay in Menu1:", showOverlay);
+  // console.log("Selected Node in Menu1:", selectedNode);
+  // console.log("Show Overlay in Menu1:", showOverlay);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100">
@@ -506,6 +512,7 @@ function Menu1() {
                   </div>
                 ) : treeData.length > 0 ? (
                   <RenderTress
+                  key={refreshTrigger}
                     treeData={filterTree(treeData, SearchTerm)}
                     onSuccess={onSuccessHandler}
                     SearchTerm={SearchTerm}

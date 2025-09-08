@@ -14,7 +14,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
   const [DisplaySignals,setDisplaySignals] = useState(false);
   const navigate=useNavigate();
 
-  console.log(SearchTerm)
+  // console.log(SearchTerm)
   const hasMatch=(node.name?.toLowerCase()  || "").includes(SearchTerm?.toLowerCase());
   const childMatch=node.children?.some(child=>
     child.name.toLowerCase().includes(SearchTerm?.toLowerCase())
@@ -44,31 +44,61 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
     toast.success("Copied ID: " + node.id);
   };
 
-  const handleDelete = async () => {
-    try {
-      const res = await fetch(`https://localhost:7285/api/Asset/${node.id}`, {
-        method: "DELETE",
-         headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      });
+  // const handleDelete = async () => {
 
-      if (!res.ok) throw new Error("Failed to delete node");
 
-      toast.success(`Deleted node: ${node.name}`);
-      setOpenDialog(false);
+  //   try {
+  //     const res = await fetch(`https://localhost:7285/api/Asset/${node.id}`, {
+  //       method: "DELETE",
+  //        headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //     });
 
-      if (onSuccess) {
-        await onSuccess();
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete node");
-    }
-  };
+  //     if (!res.ok) throw new Error("Failed to delete node");
+
+  //     toast.success(`Deleted node: ${node.name}`);
+  //     setOpenDialog(false);
+
+  //     if (onSuccess) {
+  //       await onSuccess();
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Failed to delete node");
+  //   }
+  // };
 
   // Context menu setup
+ 
+  const handleDelete = async () => {
+  try {
+    // console.log("Deleting with token:", token);
+
+    const res = await fetch(`https://localhost:7285/api/Asset/${node.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,  // must be the raw JWT string
+      },
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Delete failed: ${res.status} - ${errorText}`);
+    }
+
+    toast.success(`Deleted node: ${node.name}`);
+    window.location.reload();
+    setOpenDialog(false);
+
+    if (onSuccess) await onSuccess();
+  } catch (err) {
+    console.error("Delete error:", err);
+    toast.error("Failed to delete node");
+  }
+};
+ 
   const { show } = useContextMenu({ id: `menu_${node.id}` });
 
   const handleRightClick = (e) => {
@@ -90,7 +120,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
   };
 
   const handleDisplaySignals=()=>{
-    console.log(node);
+    // console.log(node);
       navigate("/display-signals",{state:node})
   }
     
@@ -153,7 +183,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
       </Menu>
 
       
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
           Are you sure you want to delete "<strong>{node.name}</strong>"?
@@ -178,6 +208,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
               setShowOverlay={setShowOverlay}
               setOverlayMode={setOverlayMode}
               userRole={userRole}
+              token={token}
             />
           ))}
         </ul>
