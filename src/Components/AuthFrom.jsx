@@ -80,11 +80,11 @@ const AuthForm = () => {
   const handleSubmit = async () => {
     setSuccessMessage('');
     
-    // Validate form before sending request
+  
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return; // Don't send request if validation fails
+      return; 
     }
 
     // Clear any previous errors since validation passed
@@ -131,12 +131,12 @@ const AuthForm = () => {
         setFormData({ username: '', email: '', password: '' });
         setErrors({});
       } else {
-        // Get backend exception message as text
+     
         const errorMessage = await response.text();
         toast.error(errorMessage)
       }
     } catch (error) {
-      // Network or other unexpected error
+      
       setErrors({ general: 'Network error: Unable to connect to the server' });
     } finally {
       setIsSubmitting(false);
@@ -145,11 +145,11 @@ const AuthForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-8">
-      {/* Background Pattern */}
+      
       <div className="absolute inset-0 bg-grid-slate-100 bg-[size:20px_20px] opacity-20"></div>
       
       <div className="relative bg-white/80 backdrop-blur-lg border border-white/20 p-10 rounded-3xl shadow-2xl w-full max-w-lg">
-        {/* Brand Header */}
+      
         {/* <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl mb-4 shadow-lg">
             <Shield className="h-8 w-8 text-white" />
@@ -158,7 +158,7 @@ const AuthForm = () => {
           <p className="text-slate-600 text-sm">Enterprise Authentication Portal</p>
         </div> */}
 
-        {/* Toggle Header */}
+      
         <div className="flex bg-slate-100/80 backdrop-blur-sm rounded-xl p-1.5 mb-8 border border-slate-200/50">
           <button
             onClick={() => !isLogin && toggleForm()}
@@ -211,7 +211,7 @@ const AuthForm = () => {
         )}
 
         <div className="space-y-6">
-          {/* Username - Only for Register */}
+      
           {!isLogin && (
             <div className="space-y-2">
               <label className="block text-slate-700 font-semibold text-sm" htmlFor="username">
@@ -245,7 +245,7 @@ const AuthForm = () => {
             </div>
           )}
 
-          {/* Email - For both Login and Register */}
+          
           <div className="space-y-2">
             <label className="block text-slate-700 font-semibold text-sm" htmlFor="email">
               Email Address
@@ -277,7 +277,7 @@ const AuthForm = () => {
             )}
           </div>
 
-          {/* Password - For both Login and Register */}
+         
           <div className="space-y-2">
             <label className="block text-slate-700 font-semibold text-sm" htmlFor="password">
               Password
@@ -300,7 +300,7 @@ const AuthForm = () => {
                 placeholder="Enter your password"
                 autoComplete={isLogin ? "current-password" : "new-password"}
               />
-              {/* Toggle Button */}
+             
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -320,7 +320,7 @@ const AuthForm = () => {
           </div>
         </div>
 
-        {/* Submit Button */}
+        
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
@@ -343,7 +343,7 @@ const AuthForm = () => {
           </div>
         </button>
 
-        {/* Toggle Link */}
+       
         <div className="mt-8 text-center">
           <p className="text-slate-600 mb-2">
             {isLogin ? "Don't have an account?" : "Already have an account?"}
@@ -356,7 +356,7 @@ const AuthForm = () => {
           </button>
         </div>
 
-        {/* Security Badge */}
+        
         {/* <div className="mt-8 flex items-center justify-center gap-2 text-xs text-slate-500">
           <Shield className="h-3 w-3" />
           <span>256-bit SSL Encrypted</span>

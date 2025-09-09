@@ -25,7 +25,7 @@ const AddForm = ({ onSuccess }) => {
     let isValid = true;
     const newErrors = { name: '', parentAssetId: '' };
 
-    // Validate Name
+   
     if (!/^[a-zA-Z0-9\s]*$/.test(formData.name)) {
       newErrors.name = 'Name can only contain letters, numbers, and spaces';
       isValid = false;
@@ -39,7 +39,7 @@ const AddForm = ({ onSuccess }) => {
     else if(formData.name===""){
       newErrors.name='Name Cannot be Empty'
     }
-    // Validate Parent Asset ID: Must be empty or a non-negative integer
+    
     if (formData.parentAssetId && !/^[0-9]+$/.test(formData.parentAssetId)) {
       newErrors.parentAssetId =
         'Parent Asset ID must be a non-negative integer or empty';
@@ -100,53 +100,7 @@ const AddForm = ({ onSuccess }) => {
     }
   };
 
-//   const handleSubmit = async (e) => {
-//   e.preventDefault();
-  
-//   if (!file) {
-//     toast.error('Please select a file');
-//     return;
-//   }
 
-//   setIsSubmitting(true);
-  
-//   const formData = new FormData();
-//   formData.append('file', file);
-
-//   try {
-//     await axios.post('https://localhost:7285/api/upload', formData, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       }
-//     });
-    
-//     toast.success('File added successfully');
-    
-//   } catch (error) {
-//     // Extract error message from backend BadRequest responses
-//     let errorMessage = 'Upload failed';
-    
-//     if (error.response?.data) {
-//       // Handle string responses (your BadRequest messages)
-//       if (typeof error.response.data === 'string') {
-//         errorMessage = error.response.data;
-//       }
-//       // Handle object responses (like { message: "..." })
-//       else if (error.response.data.message) {
-//         errorMessage = error.response.data.message;
-//       }
-//       else if (error.response.data.error) {
-//         errorMessage = error.response.data.error;
-//       }
-//     } else {
-//       errorMessage = error.message;
-//     }
-    
-//     console.log(errorMessage);
-//   } finally {
-//     setIsSubmitting(false);
-//   }
-// };
 
 
   const clearForm = () => {
@@ -156,7 +110,7 @@ const AddForm = ({ onSuccess }) => {
 
   return (
     <div className="mt-4 p-6 bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200 rounded-xl shadow-sm">
-      {/* Header */}
+     
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <div className="p-2 bg-emerald-100 rounded-lg">
@@ -177,7 +131,7 @@ const AddForm = ({ onSuccess }) => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Name Field */}
+   
         <div className="space-y-2">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             Asset Name <span className="text-red-500">*</span>
@@ -203,7 +157,7 @@ const AddForm = ({ onSuccess }) => {
             )}
           </div>
           
-          {/* Character counter */}
+       
           <div className="flex justify-between items-center">
             {errors.name ? (
               <p className="text-sm text-red-600 flex items-center space-x-1">
@@ -218,7 +172,7 @@ const AddForm = ({ onSuccess }) => {
           </div>
         </div>
 
-        {/* Parent Asset ID Field */}
+        
         <div className="space-y-2">
           <label htmlFor="parentAssetId" className="block text-sm font-medium text-gray-700">
             Parent Asset ID

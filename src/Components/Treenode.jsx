@@ -89,7 +89,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
     }
 
     toast.success(`Deleted node: ${node.name}`);
-    window.location.reload();
+    // window.location.reload();
     setOpenDialog(false);
 
     if (onSuccess) await onSuccess();
