@@ -7,6 +7,7 @@ const AuthForm = () => {
   
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [user,setUser]=useState()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -18,6 +19,7 @@ const AuthForm = () => {
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
+    console.log(isLogin)
     setFormData({
       username: '',
       email: '',
@@ -77,71 +79,81 @@ const AuthForm = () => {
     return newErrors;
   };
 
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
     setSuccessMessage('');
     
-  
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return; 
+        setErrors(validationErrors);
+        return;
     }
 
-    // Clear any previous errors since validation passed
     setErrors({});
     setIsSubmitting(true);
-    
+
     try {
-      const url = isLogin 
-        ? 'https://localhost:7285/api/User/Login'
-        : 'https://localhost:7285/api/User/Register';
-      
-      const bodyData = isLogin 
-        ? { email: formData.email, password: formData.password }
-        : formData;
+        const url = isLogin
+            ? 'https://localhost:7285/api/User/Login'
+            : 'https://localhost:7285/api/User/Register';
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyData),
-      });
+        const bodyData = isLogin
+            ? { email: formData.email, password: formData.password }
+            : formData;
 
-      if (response.ok) {
-        const data = await response.json();
-        if (isLogin) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify({
-            email: data.email,
-            username: data.username,
-            role: data.role
-          }));
-          toast.success(`Welcome back, ${data.username}!`);
-          setSuccessMessage(`Welcome back, ${data.username}!`);
-          
-          window.location.href = '/Dashboard';
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bodyData),
+            credentials: 'include' // This sends cookies
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (isLogin) {
+                console.log('Login successful, checking cookies...');
+                console.log('Available cookies:', document.cookie);
+
+                // Small delay to ensure cookie is set
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                const userinfo = await fetch('https://localhost:7285/api/User/me', {
+                    credentials: "include",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (userinfo.ok) {
+                    const userdata = await userinfo.json();
+                    console.log('User data received:', userdata);
+                    setUser(userdata);
+                    localStorage.setItem('user',JSON.stringify(userdata));
+                    window.location.href='/Dashboard';
+                } else {
+                    const err = await userinfo.text();
+                    console.log('Me endpoint error:', err);
+                }
+            } else {
+                toast.success('User registered successfully! Please login now.');
+                setTimeout(() => {
+                    setIsLogin(true);
+                    setSuccessMessage('');
+                }, 2000);
+            }
+
+            setFormData({ username: '', email: '', password: '' });
+            setErrors({});
         } else {
-          
-          toast.success('User registered successfully! Please login now.')
-          setTimeout(() => {
-            setIsLogin(true);
-            setSuccessMessage('');
-          }, 2000);
+            const errorMessage = await response.text();
+            toast.error(errorMessage);
         }
-
-        setFormData({ username: '', email: '', password: '' });
-        setErrors({});
-      } else {
-     
-        const errorMessage = await response.text();
-        toast.error(errorMessage)
-      }
     } catch (error) {
-      
-      setErrors({ general: 'Network error: Unable to connect to the server' });
+        console.error('Network error:', error);
+        setErrors({ general: 'Network error: Unable to connect to the server' });
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-8">

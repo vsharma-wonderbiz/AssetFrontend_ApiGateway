@@ -7,6 +7,7 @@ import AuthForm from './Components/AuthFrom.jsx';
 import ErrorPage from './Components/ErrorPage.jsx';
 import HistoryLogs from './Components/HistoryLogs.jsx';
 import NotificationToast from './Components/NotificationToast.jsx';
+import Dragging from './Components/Dragging.jsx';
 
 const App = () => {
   return (
@@ -27,7 +28,9 @@ const App = () => {
           <Route path='/Logs' element={<HistoryLogs/>}></Route>
         </Routes>
       </Router>
+      
     </>
+    
   );
 }
 

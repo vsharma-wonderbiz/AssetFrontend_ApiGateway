@@ -82,7 +82,8 @@ const AddForm = ({ onSuccess }) => {
         headers:{
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
-        }
+        },
+        withCredentials:true
       });
       toast.success('Asset added successfully!');
 

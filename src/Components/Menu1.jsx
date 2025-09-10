@@ -225,10 +225,10 @@ function Menu1() {
 
  useEffect(() => {
   const checkUser = () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
+    // const token = localStorage.getItem("token");
+    const user = localStorage.getItem('user');
 
-    if (token && user) {
+    if (user) {
       try {
         const parsedUser = JSON.parse(user);
         setUserRole(parsedUser.role);

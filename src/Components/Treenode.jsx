@@ -13,6 +13,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
   const [AddSignal,setAddSignal] = useState(false);
   const [DisplaySignals,setDisplaySignals] = useState(false);
   const navigate=useNavigate();
+  const [dragdata,setDragdata]=useState();
 
   // console.log(SearchTerm)
   const hasMatch=(node.name?.toLowerCase()  || "").includes(SearchTerm?.toLowerCase());
@@ -44,33 +45,6 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
     toast.success("Copied ID: " + node.id);
   };
 
-  // const handleDelete = async () => {
-
-
-  //   try {
-  //     const res = await fetch(`https://localhost:7285/api/Asset/${node.id}`, {
-  //       method: "DELETE",
-  //        headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //     });
-
-  //     if (!res.ok) throw new Error("Failed to delete node");
-
-  //     toast.success(`Deleted node: ${node.name}`);
-  //     setOpenDialog(false);
-
-  //     if (onSuccess) {
-  //       await onSuccess();
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("Failed to delete node");
-  //   }
-  // };
-
-  // Context menu setup
  
   const handleDelete = async () => {
   try {
@@ -79,7 +53,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
     const res = await fetch(`https://localhost:7285/api/Asset/${node.id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${token}`,  // must be the raw JWT string
+        Authorization: `Bearer ${token}`,  
       },
     });
 
@@ -124,8 +98,34 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
       navigate("/display-signals",{state:node})
   }
     
-   
- 
+ const handleDragStart = (e, nodeId) => {
+  console.log("Dargging id",nodeId)
+  e.dataTransfer.setData("assetId", nodeId);
+
+  const dragIcon = document.createElement("div");
+  dragIcon.style.width = "100px";
+  dragIcon.style.height = "20px";
+  dragIcon.style.background = "lightblue";
+  dragIcon.style.display = "flex";
+  dragIcon.style.justifyContent = "center";
+  dragIcon.style.alignItems = "center";
+  dragIcon.innerText = "Dragging...";
+  document.body.appendChild(dragIcon);
+
+  e.dataTransfer.setDragImage(dragIcon, 50, 10);
+
+  setTimeout(() => document.body.removeChild(dragIcon), 0);
+};
+
+const allowDrop=(e)=>{
+   e.preventDefault();
+}
+//  console.log(dragdata);  
+const handleDrop=(e,nodeId)=>{
+  console.log("Dropping the id",nodeId);
+  e.dataTransfer.setData("parentAssetID",nodeId)
+}
+
 
   return (
     <li className={`ml-4 mb-2`}>
@@ -135,6 +135,10 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
         }`}
         onClick={() => setExpanded(!expanded)}
         onContextMenu={handleRightClick}
+        draggable={true}
+        onDragOver={allowDrop}
+        onDragStart={(e)=>handleDragStart(e, node.id)}
+        onDrop={(e)=>handleDrop(e,node.id)}
       >
         <div className="flex items-center space-x-2">
           {node.children && node.children.length > 0 && (
