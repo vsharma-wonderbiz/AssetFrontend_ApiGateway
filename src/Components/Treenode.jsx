@@ -52,9 +52,7 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
 
     const res = await fetch(`https://localhost:7285/api/Asset/${node.id}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,  
-      },
+      credentials:'include'
     });
 
     if (!res.ok) {

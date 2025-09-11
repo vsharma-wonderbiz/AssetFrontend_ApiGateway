@@ -128,10 +128,10 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
 
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          // "Content-Type": "application/json"
-         },
+        credentials:'include',
+        headers:{
+           "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           ...formData,
           signalName: formData.signalName.trim(),

@@ -1,13 +1,13 @@
-
 import React, { useState, useEffect } from "react";
-import { Upload, Plus, Trash2, Download, Search, BarChart3, FolderTree, Activity, Info, MousePointer, Eye, Settings } from "lucide-react";
+import { Upload, Plus, Download, Search, BarChart3, FolderTree, Activity, Info, MousePointer, Eye, Settings } from "lucide-react";
 import AddForm from "./AddForm";
 import RenderTress from "./RenderTress";
 import Search2 from "./Search2";
 import SignalOverlay from "./SignalOverlay";
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../store/UserSlice";
 
 // File Upload Component
 const FileUpload = ({ onFileChange }) => {
@@ -207,60 +207,63 @@ const InstructionsCard = ({ userRole }) => {
 function Menu1() {
   const [treeData, setTreeData] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
   const [stats, setStats] = useState({ totalNodes: 0, maxDepth: 0 });
-  const [SearchTerm, SetSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [selectedNode, setSelectedNode] = useState(null);
   const [overlayMode, setOverlayMode] = useState("add");
-  const [userRole, setUserRole] = useState();
+  const [userRole, setUserRole] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName,setUserName]=useState();
-    const [fileerrors, setfileErrors] = useState([]);
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [userName, setUserName] = useState("");
+  const [fileErrors, setFileErrors] = useState([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const navigate=useNavigate();
-  const token=localStorage.getItem("token");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
- useEffect(() => {
-  const checkUser = () => {
-    // const token = localStorage.getItem("token");
-    const user = localStorage.getItem('user');
+  
 
-    if (user) {
-      try {
-        const parsedUser = JSON.parse(user);
-        setUserRole(parsedUser.role);
-        setUserName(parsedUser.username);
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error("Error parsing user from localStorage:", error);
-        setUserRole(null);
-        setUserName("");
-        setIsLoggedIn(false);
-      }
-    } else {
-      setUserRole(null);
+  // Sync local state with Redux store
+const loadUserFromLocalStorage = () => {
+  const user = localStorage.getItem("user");
+
+  if (user) {
+    try {
+      const parsedUser = JSON.parse(user);
+
+      // Extract only the fields you need
+      const username = parsedUser.username || "";
+      const role = parsedUser.role || null;
+
+      // Set component state
+      setUserName(username);
+      setUserRole(role);
+      setIsLoggedIn(true);
+
+      console.log("Loaded from localStorage -> Username:", username, "Role:", role);
+    } catch (err) {
+      console.error("Error parsing user from localStorage:", err);
       setUserName("");
+      setUserRole(null);
       setIsLoggedIn(false);
     }
-  };
+  } else {
+    // No user in localStorage
+    setUserName("");
+    setUserRole(null);
+    setIsLoggedIn(false);
+  }
+};
 
-  checkUser();
-  window.addEventListener("storage", checkUser);
 
-  return () => window.removeEventListener("storage", checkUser);
+useEffect(() => {
+  loadUserFromLocalStorage();
+  window.addEventListener("storage", loadUserFromLocalStorage);
+
+  return () => window.removeEventListener("storage", loadUserFromLocalStorage);
 }, []);
-
-//  console.log(userName)
-
-  useEffect(() => {
-    fetchHierarchy();
-    fetchStatistics();
-  }, []);
-
-
+  // Fetch hierarchy and statistics on mount
   useEffect(() => {
     fetchHierarchy();
     fetchStatistics();
@@ -269,13 +272,20 @@ function Menu1() {
   const fetchHierarchy = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://localhost:7285/api/Asset/heirarchy");
+      const res = await fetch("https://localhost:7285/api/Asset/heirarchy", {
+        credentials: "include",
+      });
+      if (res.status === 401) {
+        navigate("/Register");
+        return;
+      }
       if (!res.ok) throw new Error("Failed to fetch hierarchy");
       const data = await res.json();
       setTreeData(data);
     } catch (err) {
       console.error("Error fetching hierarchy:", err);
       setTreeData([]);
+      toast.error("Failed to fetch hierarchy data");
     } finally {
       setLoading(false);
     }
@@ -283,70 +293,35 @@ function Menu1() {
 
   const fetchStatistics = async () => {
     try {
-      const res = await fetch("https://localhost:7285/api/Asset/statistics");
+      const res = await fetch("https://localhost:7285/api/Asset/statistics", {
+        credentials: "include",
+      });
+      if (res.status === 401) {
+        navigate("/Register");
+        return;
+      }
       if (!res.ok) throw new Error("Failed to fetch statistics");
       const data = await res.json();
       setStats({ totalNodes: data.totalNodes, maxDepth: data.maxDepth });
     } catch (err) {
       console.error("Error fetching statistics:", err);
       setStats({ totalNodes: 0, maxDepth: 0 });
+      toast.error("Failed to fetch statistics");
     }
   };
 
   const onSuccessHandler = async () => {
     await fetchHierarchy();
     await fetchStatistics();
-
-      setRefreshTrigger(prev => prev + 1);
-  
-  // console.log("✅ Data refreshed");
-
+    setRefreshTrigger((prev) => prev + 1);
   };
 
-  // const handleFileChange = async (e) => {
-  //   const file = e.target.files[0];
-  //   if (!file) {
-  //     alert("No file selected");
-  //     return;
-  //   }
 
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-
-  //   try {
-  //     const res = await fetch("https://localhost:7285/api/Asset/upload", {
-  //       method: "POST",
-  //       headers:{ 
-  //         Authorization: `Bearer ${token}`,
-  //         // "Content-Type": "application/json"
-  //       },
-  //       body: formData,
-  //     });
-  //     // if (!res.ok) throw new Error("Upload failed");
-  //     // // toast.success("File uploaded successfully!");
-  //     // // onSuccessHandler();
-
-  //     // const errorData = await <res className="text"></res>().catch(() => null);
-  //     // toast.error(errorData?.error || "Failed upload");
-  //   } catch (error) {
-      
-  //     // alert("Failed to upload file");
-  //     // toast.error(err);
-  //     // toast.error(err.data.message);  
-      
-  //     if(error.response){
-  //       toast.success(error.response.data || error.response.data.error || "Upload failed")
-  //     }
-  //     else {
-  //        alert("Something went wrong: " + error.message);
-  //     }
-  //   }
-  // };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) {
-      alert("No file selected");
+      toast.error("No file selected");
       return;
     }
 
@@ -356,34 +331,30 @@ function Menu1() {
     try {
       const res = await fetch("https://localhost:7285/api/Asset/upload", {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
         body: formData,
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        // ❌ Store multiple errors
-        // alert("invalid ata types ")
-        setfileErrors(data.errors || []);
-        // console.log(fileerrors);
-        // Redirect to error page
+        setFileErrors(data.errors || []);
         navigate("/fileError", { state: { errors: data.errors } });
-       
       } else {
-        // ✅ Success
-        alert(data.message);
+        toast.success(data.message || "File uploaded successfully!");
+        onSuccessHandler();
       }
     } catch (error) {
-      alert("Something went wrong: " + error.message);
+      console.error("Error uploading file:", error);
+      toast.error("Something went wrong: " + error.message);
     }
 
-     e.target.value = "";
+    e.target.value = "";
   };
 
   const handleDownload = () => {
-    if (!treeData) {
-      alert("No data to download.");
+    if (!treeData || treeData.length === 0) {
+      toast.error("No data to download");
       return;
     }
     const blob = new Blob([JSON.stringify(treeData, null, 2)], { type: "application/json" });
@@ -399,7 +370,7 @@ function Menu1() {
     if (!keyword) return nodes;
     return nodes
       .map((node) => {
-        const children = node.children ? filterTree(node.children, keyword) : ["No data Found"];
+        const children = node.children ? filterTree(node.children, keyword) : [];
         if (node.name.toLowerCase().includes(keyword.toLowerCase()) || children.length) {
           return { ...node, children };
         }
@@ -408,16 +379,26 @@ function Menu1() {
       .filter(Boolean);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setUserRole(null);
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("https://localhost:7285/api/User/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Logout failed");
+      toast.success("Logged out successfully");
+    } catch (err) {
+      console.error("Logout error:", err);
+      toast.error("Failed to logout");
+    }
+
+    // Reset Redux store user data
+   
+    // Clear localStorage
+    localStorage.clear();
+    // Redirect to login page
     navigate("/Register");
   };
-
-
-  // console.log("Selected Node in Menu1:", selectedNode);
-  // console.log("Show Overlay in Menu1:", showOverlay);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100">
@@ -436,39 +417,33 @@ function Menu1() {
             </div>
             <div className="flex items-center space-x-2 text-sm text-gray-500">
               <Activity className="w-4 h-4" />
-          {isLoggedIn ? (
-              <div className="flex items-center space-x-4 bg-gray-100 px-4 py-2 rounded-full shadow-sm">
-  {/* User Avatar / Initial */}
-  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold uppercase">
-    {userName ? userName[0] : "U"}
-  </div>
-
-  {/* Username */}
-  <span className="text-gray-800 font-medium text-lg">{userName}</span>
-
-  {/* Logout Button */}
-  <button
-    onClick={handleLogout}
-    className="ml-auto bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-full font-medium transition-all duration-200 shadow hover:shadow-lg"
-  >
-    Logout
-  </button>
-</div>
+              {isLoggedIn ? (
+                <div className="flex items-center space-x-4 bg-gray-100 px-4 py-2 rounded-full shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold uppercase">
+                    {userName ? userName[0] : "U"}
+                  </div>
+                  <span className="text-gray-800 font-medium text-lg">{userName}</span>
+                  <button
+                    onClick={handleLogout}
+                    className="ml-auto bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-full font-medium transition-all duration-200 shadow hover:shadow-lg"
+                  >
+                    Logout
+                  </button>
+                </div>
               ) : (
-              <button
-                onClick={() => navigate("/Register")}
-               className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-               >
-               Login
-             </button>
-         )}
+                <button
+                  onClick={() => navigate("/Register")}
+                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                >
+                  Login
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-6 py-8">
-        {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <StatCard
             icon={BarChart3}
@@ -484,18 +459,15 @@ function Menu1() {
           />
         </div>
 
-        {/* Instructions Card */}
         {isLoggedIn && (
           <div className="mb-6">
             <InstructionsCard userRole={userRole} />
           </div>
         )}
 
-        {/* Search */}
-        <Search2 SearchTerm={SearchTerm} SetSearchTerm={SetSearchTerm} />
+        <Search2 searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content - Tree Visualization */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="p-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200">
@@ -512,15 +484,14 @@ function Menu1() {
                   </div>
                 ) : treeData.length > 0 ? (
                   <RenderTress
-                  key={refreshTrigger}
-                    treeData={filterTree(treeData, SearchTerm)}
+                    key={refreshTrigger}
+                    treeData={filterTree(treeData, searchTerm)}
                     onSuccess={onSuccessHandler}
-                    SearchTerm={SearchTerm}
+                    searchTerm={searchTerm}
                     setShowOverlay={setShowOverlay}
                     setSelectedNode={setSelectedNode}
                     setOverlayMode={setOverlayMode}
                     userRole={userRole}
-                    token={token}
                   />
                 ) : (
                   <div className="text-center py-12">
@@ -533,9 +504,7 @@ function Menu1() {
             </div>
           </div>
 
-          {/* Sidebar - Controls */}
           <div className="space-y-6">
-            {/* File Upload */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Upload className="w-5 h-5 mr-2 text-blue-600" />
@@ -563,8 +532,7 @@ function Menu1() {
                     <span>Add Node</span>
                   </button>
                 </div>
-                {openAdd && <AddForm onSuccess={onSuccessHandler} token={token}/>}
-                {openDelete && <AddForm onSuccess={onSuccessHandler} treeData={treeData} />}
+                {openAdd && <AddForm onSuccess={onSuccessHandler} />}
               </div>
             ) : (
               <div></div>
@@ -579,7 +547,6 @@ function Menu1() {
         mode={overlayMode}
         onClose={() => setShowOverlay(false)}
         onSuccess={onSuccessHandler}
-        token={token}
       />
     </div>
   );

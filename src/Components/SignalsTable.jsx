@@ -19,25 +19,23 @@ const SignalsTable = () => {
   const [userRole, setUserRole] = useState("");
   const [storedtoken, setToken] = useState("");
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token)
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        console.log('Decoded JWT:', decoded); 
-        
-       
-        const role = decoded.role || decoded.userRole || decoded.Role || decoded.UserRole || "";
-        console.log('Extracted role:', role);
-        
-        setUserRole(role);
-      } catch (error) {
-        console.error('Error decoding JWT token:', error);
-        setUserRole("");
-      }
+ useEffect(() => {
+  const user = localStorage.getItem("user");
+  if (user) {
+    try {
+      const parsedUser = JSON.parse(user);
+      setUserRole(parsedUser.role); // must match the key in normalizedUser
+      console.log("User Role:", parsedUser.role);
+    } catch (err) {
+      console.error("Error parsing user from localStorage:", err);
+      setUserRole(null);
     }
-  }, []);
+  } else {
+    setUserRole(null);
+  }
+}, []);
+
+
 
   
   useEffect(() => {
