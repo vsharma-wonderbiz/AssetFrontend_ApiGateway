@@ -14,12 +14,16 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
   const [DisplaySignals,setDisplaySignals] = useState(false);
   const navigate=useNavigate();
   const [dragdata,setDragdata]=useState();
+  const [tranferId,setTransferId]=useState();
+  const [newparentId,setNewParentId]=useState();
 
-  // console.log(SearchTerm)
+   console.log(SearchTerm)
   const hasMatch=(node.name?.toLowerCase()  || "").includes(SearchTerm?.toLowerCase());
   const childMatch=node.children?.some(child=>
     child.name.toLowerCase().includes(SearchTerm?.toLowerCase())
   )
+
+  
 
   // console.log(hasMatch);
   // console.log(childMatch);
@@ -96,10 +100,11 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
       navigate("/display-signals",{state:node})
   }
     
- const handleDragStart = (e, nodeId) => {
-  console.log("Dargging id",nodeId)
+const handleDragStart = (e, nodeId) => {
+  setTransferId(nodeId); // dragged node
   e.dataTransfer.setData("assetId", nodeId);
 
+  // Custom drag preview
   const dragIcon = document.createElement("div");
   dragIcon.style.width = "100px";
   dragIcon.style.height = "20px";
@@ -115,14 +120,43 @@ const TreeNode = ({ node, SearchTerm, onSuccess, isRoot = false,setShowOverlay,s
   setTimeout(() => document.body.removeChild(dragIcon), 0);
 };
 
-const allowDrop=(e)=>{
-   e.preventDefault();
-}
-//  console.log(dragdata);  
-const handleDrop=(e,nodeId)=>{
-  console.log("Dropping the id",nodeId);
-  e.dataTransfer.setData("parentAssetID",nodeId)
-}
+const allowDrop = (e) => {
+  e.preventDefault();
+};
+
+const handleDrop = async (e, nodeId) => {
+  e.preventDefault();
+  const draggedId = e.dataTransfer.getData("assetId"); // child node
+  const parentId = nodeId; // dropped on node
+
+  if (!draggedId || !parentId) return;
+
+  try {
+    const response = await fetch("https://localhost:7285/api/Asset/transfer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials:'include',
+      body: JSON.stringify({
+        childId: parseInt(draggedId),
+        newParentId: parseInt(parentId),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to transfer asset");
+    }
+
+    // Success: refresh data
+    if (typeof onSuccess === "function") {
+      onSuccess();
+    }
+  } catch (error) {
+    console.error("Error transferring asset:", error);
+  }
+};
+
 
 
   return (

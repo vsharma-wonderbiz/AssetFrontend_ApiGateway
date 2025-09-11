@@ -220,49 +220,92 @@ function Menu1() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  
 
-  // Sync local state with Redux store
-const loadUserFromLocalStorage = () => {
-  const user = localStorage.getItem("user");
+   const loadUserFromLocalStorage = () => {
+    const user = localStorage.getItem("user");
 
-  if (user) {
-    try {
-      const parsedUser = JSON.parse(user);
+    if (user) {
+      try {
+        const parsedUser = JSON.parse(user);
+        const username = parsedUser.username || "";
+        const role = parsedUser.role || null;
 
-      // Extract only the fields you need
-      const username = parsedUser.username || "";
-      const role = parsedUser.role || null;
+        setUserName(username);
+        setUserRole(role);
+        setIsLoggedIn(true);
 
-      // Set component state
-      setUserName(username);
-      setUserRole(role);
-      setIsLoggedIn(true);
-
-      console.log("Loaded from localStorage -> Username:", username, "Role:", role);
-    } catch (err) {
-      console.error("Error parsing user from localStorage:", err);
+        console.log("Loaded from localStorage -> Username:", username, "Role:", role);
+      } catch (err) {
+        console.error("Error parsing user from localStorage:", err);
+        setUserName("");
+        setUserRole(null);
+        setIsLoggedIn(false);
+      }
+    } else {
       setUserName("");
       setUserRole(null);
       setIsLoggedIn(false);
     }
-  } else {
-    // No user in localStorage
-    setUserName("");
-    setUserRole(null);
-    setIsLoggedIn(false);
+  };
+
+  // Sync local state with Redux store
+const fetchUserDataAfterGoogleLogin = async () => {
+  try {
+    console.log("Fetching user data after Google login...");
+    
+    const response = await fetch("https://localhost:7285/api/User/me", {
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      const user = await response.json();
+      const normalizedUser = {
+        username: user.username || user.name || "",
+        role: user.role || "User",
+      };
+      
+      console.log("Google login - storing user data:", normalizedUser);
+      
+      localStorage.setItem("user", JSON.stringify(normalizedUser));
+      setUserName(normalizedUser.username);
+      setUserRole(normalizedUser.role);
+      setIsLoggedIn(true);
+      
+      toast.success('Google login successful!');
+      
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+    } else {
+      throw new Error("Failed to fetch user data after Google login");
+    }
+  } catch (err) {
+    console.error("Error fetching user after Google login:", err);
+    toast.error("Failed to load user data. Please try logging in again.");
+    navigate("/Register");
   }
 };
 
 
-useEffect(() => {
-  loadUserFromLocalStorage();
-  window.addEventListener("storage", loadUserFromLocalStorage);
 
+
+useEffect(() => {
+  // Check if this is a Google login redirect
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("googleLogin")) {
+    // Handle Google login callback
+    fetchUserDataAfterGoogleLogin();
+  } else {
+    // Normal page load - check localStorage
+    loadUserFromLocalStorage();
+  }
+
+  window.addEventListener("storage", loadUserFromLocalStorage);
   return () => window.removeEventListener("storage", loadUserFromLocalStorage);
 }, []);
+
+
   // Fetch hierarchy and statistics on mount
   useEffect(() => {
     fetchHierarchy();
@@ -385,6 +428,7 @@ useEffect(() => {
         method: "POST",
         credentials: "include",
       });
+      console.log("Logout response:", res);
       if (!res.ok) throw new Error("Logout failed");
       toast.success("Logged out successfully");
     } catch (err) {

@@ -14,46 +14,46 @@ const AuthForm = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
- useEffect(() => {
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch("https://localhost:7285/api/User/me", {
-        credentials: "include",
-      });
+//  useEffect(() => {
+//   const fetchUserData = async () => {
+//     try {
+//       const response = await fetch("https://localhost:7285/api/User/me", {
+//         credentials: "include",
+//       });
 
-      if (response.ok) {
-        const user = await response.json();
+//       if (response.ok) {
+//         const user = await response.json();
 
-        // Normalize user data
-        const normalizedUser = {
-          username: user.username || user.name || "",
-          role: user.role || "User",
-        };
+//         // Normalize user data
+//         const normalizedUser = {
+//           username: user.username || user.name || "",
+//           role: user.role || "User",
+//         };
 
-        // Store in localStorage
-        localStorage.setItem("user", JSON.stringify(normalizedUser));
+//         // Store in localStorage
+//         localStorage.setItem("user", JSON.stringify(normalizedUser));
 
-        console.log("Google Username:", normalizedUser.username);
-        console.log("Google Role:", normalizedUser.role);
+//         console.log("Google Username:", normalizedUser.username);
+//         console.log("Google Role:", normalizedUser.role);
 
-        // Redirect to Dashboard
-        // window.location.href = "/Dashboard";
-      } else {
-        throw new Error("Failed to fetch user data");
-      }
-    } catch (err) {
-      console.error("Error fetching user after Google login:", err);
-    }
-  };
+//         // Redirect to Dashboard
+//         // window.location.href = "/Dashboard";
+//       } else {
+//         throw new Error("Failed to fetch user data");
+//       }
+//     } catch (err) {
+//       console.error("Error fetching user after Google login:", err);
+//     }
+//   };
 
-  const params = new URLSearchParams(window.location.search);
-  if (params.has("code") || params.has("state")) {
-    // Run fetch after 4 seconds
-    setTimeout(() => {
-      fetchUserData();
-    }, 4000);
-  }
-}, []);
+//   const params = new URLSearchParams(window.location.search);
+//   if (params.has("code") || params.has("state")) {
+//     // Run fetch after 4 seconds
+//     setTimeout(() => {
+//       fetchUserData();
+//     }, 4000);
+//   }
+// }, []);
 
 
   const toggleForm = () => {
