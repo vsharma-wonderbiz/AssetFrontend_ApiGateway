@@ -166,7 +166,7 @@ const TreeNode = ({
           newParentId: parseInt(parentId),
         }),
       });
-
+         toast.success("node Tranfer Sucessfully");
       if (!response.ok) {
         throw new Error("Failed to transfer asset");
       }

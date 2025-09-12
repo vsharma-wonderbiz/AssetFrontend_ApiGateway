@@ -9,7 +9,7 @@ const NotificationToast = () => {
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl("https://localhost:7285/notify", {
-        accessTokenFactory: () => localStorage.getItem("token"),
+        // accessTokenFactory: () => localStorage.getItem("token"),
         withCredentials: true
       })
       .withAutomaticReconnect()

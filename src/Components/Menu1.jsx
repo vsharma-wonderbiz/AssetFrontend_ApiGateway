@@ -192,10 +192,10 @@ const InstructionsCard = ({ userRole }) => {
             )}
             
             <div className="mt-4 pt-3 border-t border-gray-200">
-              <p className="text-xs text-gray-500 flex items-center">
+              {/* <p className="text-xs text-gray-500 flex items-center">
                 <Info className="w-3 h-3 mr-1" />
                 Tip: Look for the right-click cursor when hovering over nodes
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
@@ -382,7 +382,23 @@ useEffect(() => {
 
       if (!res.ok) {
         setFileErrors(data.errors || []);
-        navigate("/fileError", { state: { errors: data.errors } });
+       
+        toast.error(
+          <div>
+            <p>File upload failed. View details?</p>
+            <button
+              onClick={() => navigate("/fileError", { state: { errors: data.errors } })}
+              className="mt-2 bg-blue-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm"
+            >
+              View Errors
+            </button>
+          </div>,
+          {
+            autoClose: 5000, 
+            closeOnClick: false,
+            draggable: false,
+          }
+        );
       } else {
         toast.success(data.message || "File uploaded successfully!");
         onSuccessHandler();
