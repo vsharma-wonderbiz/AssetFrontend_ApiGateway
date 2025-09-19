@@ -65,7 +65,9 @@ const isExists = (nodes, nodeId) => {
   }
 
   try {
-    const res = await axios.delete(`https://localhost:7285/api/asset/${nodeId}`);
+    const res = await axios.delete(`https://localhost:7285/api/asset/${nodeId}`,{
+      withCredentials:''
+    });
     toast.success("Node Deleted Successfully");
     if (onSuccess) {
       onSuccess();

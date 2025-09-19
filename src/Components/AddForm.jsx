@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Plus, X, AlertCircle, Check } from 'lucide-react';
+import api from '../Api/Api';
 
 const AddForm = ({ onSuccess }) => {
 
@@ -78,13 +79,16 @@ const AddForm = ({ onSuccess }) => {
           : null,
       };
 
-      await axios.post('https://localhost:7285/api/asset/Add', payload ,{
-        headers:{
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        withCredentials:true
-      });
+      // await axios.post('https://localhost:7285/api/asset/Add', payload ,{
+      //   headers:{
+      //     Authorization: `Bearer ${token}`,
+      //     "Content-Type": "application/json"
+      //   },
+      //   withCredentials:true
+      // });
+       
+      const response= await api.post("/Asset/Add",payload);
+      console.log(response.data);
       toast.success('Asset added successfully!');
 
       if (onSuccess) {

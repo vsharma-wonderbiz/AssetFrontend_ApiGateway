@@ -138,6 +138,24 @@ const SignalsTable = () => {
     setEditSignal(null);
   };
 
+  const handleAverage = async (signalName) => {
+  try {
+    const response = await fetch(`https://localhost:7285/api/Signals/calculate-average/${signalName}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to enqueue average request");
+    }
+
+    toast.success(`Signal ${signalName} enqueued for average calculation`);
+  } catch (error) {
+    console.error("Average Error:", error);
+    // toast.error(error.message || "Something went wrong");
+  }
+};
+
   const getValueTypeColor = (valueType) => {
     switch (valueType?.toLowerCase()) {
       case 'float':
@@ -244,6 +262,7 @@ const SignalsTable = () => {
                     {userRole === "Admin" && (
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex items-center justify-center space-x-3">
+
                           <button
                             onClick={() => handleEdit(signal.signalId)}
                             className="inline-flex items-center p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
@@ -251,6 +270,7 @@ const SignalsTable = () => {
                           >
                             <Edit className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
                           </button>
+
                           <button
                             onClick={() => {
                               setSignalToDelete(signal.signalId);
@@ -261,6 +281,15 @@ const SignalsTable = () => {
                           >
                             <Trash2 className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
                           </button>
+
+                          {/* 🔹 Average Button */}
+    <button
+      onClick={() => handleAverage(signal.signalName  )}
+      className="inline-flex items-center p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200 group"
+      title="Calculate Average"
+    >
+      📊
+    </button>
                         </div>
                       </td>
                     )}
