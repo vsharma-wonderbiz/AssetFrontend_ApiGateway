@@ -175,8 +175,8 @@ const AuthForm = () => {
 
     try {
       const url = isLogin
-        ? 'https://localhost:7285/api/User/Login'
-        : 'https://localhost:7285/api/User/Register';
+        ? 'https://localhost:7169/api/User/Login'
+        : 'https://localhost:7169/api/User/Register';
 
       const bodyData = isLogin
         ? { email: formData.email, password: formData.password }
@@ -192,7 +192,7 @@ const AuthForm = () => {
       if (response.ok) {
         if (isLogin) {
           // Fetch user data from /api/User/me after successful login
-          const userResponse = await fetch('https://localhost:7285/api/User/me', {
+          const userResponse = await fetch('https://localhost:7169/api/User/me', {
             credentials: 'include',
           });
 

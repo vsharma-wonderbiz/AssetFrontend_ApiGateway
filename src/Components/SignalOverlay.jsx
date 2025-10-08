@@ -121,8 +121,8 @@ const SignalOverlay = ({ show, node, onClose, mode = "add", signal = null, onUpd
     try {
       const url =
         mode === "edit"
-          ? `https://localhost:7285/api/Signals/${signal.signalId}`
-          : "https://localhost:7285/api/Signals";
+          ? `https://localhost:7169/api/Signal/${signal.signalId}`
+          : "https://localhost:7169/api/Signal";
 
       const method = mode === "edit" ? "PUT" : "POST";
 

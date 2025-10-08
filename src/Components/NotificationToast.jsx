@@ -55,17 +55,7 @@ const NotificationToast = () => {
   return (
     <>
      
-      <div style={{
-        position: "fixed",
-        top: "10px",
-        left: "10px",
-        background: "yellow",
-        padding: "5px",
-        fontSize: "12px",
-        zIndex: 10000
-      }}>
-        Notifications: {notifications.length}
-      </div>
+      
 
       
       <div style={{

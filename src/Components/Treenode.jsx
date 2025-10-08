@@ -7,6 +7,7 @@ import { ChevronRight, ExpandMore } from "@mui/icons-material";
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import { useNavigate } from "react-router-dom";
+import { Signal } from "lucide-react";
 
 const TreeNode = ({ 
   node, 
@@ -21,6 +22,7 @@ const TreeNode = ({
 }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [Sgnals,setSignals]=useState();
   const navigate = useNavigate();
 
   // Fixed: Better search matching logic
@@ -86,7 +88,7 @@ const TreeNode = ({
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`https://localhost:7285/api/Asset/${node.id}`, {
+      const res = await fetch(`https://localhost:7169/api/Asset/${node.id}`, {
         method: "DELETE",
         credentials: 'include'
       });
@@ -125,6 +127,17 @@ const TreeNode = ({
   };
 
   const handleDisplaySignals = () => {
+    // try{
+    //   const response=await fetch(`https://localhost:7169/api/Signal/${node.id}`);
+    //   if(response.ok){
+    //     const data=response.json();
+    //     setSignals(data);
+    //   }else{
+    //     console.log("unabel to fetch the signal");
+    //   }
+    // }catch(error){
+    //   console.log(error.message);
+    // }
     navigate("/display-signals", { state: node });
   };
 
@@ -155,7 +168,7 @@ const TreeNode = ({
     if (!draggedId || !parentId) return;
 
     try {
-      const response = await fetch("https://localhost:7285/api/Asset/transfer", {
+      const response = await fetch("https://localhost:7169/api/Asset/transfer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

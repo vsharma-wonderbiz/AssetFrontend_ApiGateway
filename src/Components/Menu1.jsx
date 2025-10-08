@@ -308,14 +308,14 @@ useEffect(() => {
 
   // Fetch hierarchy and statistics on mount
   useEffect(() => {
-    fetchHierarchy();
+    fetchHierarchy(); 
     fetchStatistics();
   }, []);
 
   const fetchHierarchy = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://localhost:7285/api/Asset/heirarchy", {
+      const res = await fetch("https://localhost:7169/api/Asset/heirarchy", {
         credentials: "include",
       });
       if (res.status === 401) {
@@ -330,13 +330,13 @@ useEffect(() => {
       setTreeData([]);
       toast.error("Failed to fetch hierarchy data");
     } finally {
-      setLoading(false);
+      setLoading(false);    
     }
   };
 
   const fetchStatistics = async () => {
     try {
-      const res = await fetch("https://localhost:7285/api/Asset/statistics", {
+      const res = await fetch("https://localhost:7169/api/Asset/statistics", {
         credentials: "include",
       });
       if (res.status === 401) {
@@ -371,8 +371,8 @@ useEffect(() => {
     const formData = new FormData();
     formData.append("file", file);
 
-    try {
-      const res = await fetch("https://localhost:7285/api/Asset/upload", {
+    try { 
+      const res = await fetch("https://localhost:7169/api/Asset/upload", {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -440,7 +440,7 @@ useEffect(() => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("https://localhost:7285/api/User/logout", {
+      const res = await fetch("https://localhost:7169/api/User/logout", {
         method: "POST",
         credentials: "include",
       });

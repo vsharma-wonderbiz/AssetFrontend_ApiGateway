@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 const DeleteForm = ({ onSuccess ,treeData }) => {
   const [nodeId, setNodeId] = useState('');
   const [error, setError] = useState('');
-  const [confirmDelete,setConfirmDelete]=useState(false);
+  const [confirmDelete,setConfirmDelete]=useState(false);n    
 
   const validateForm = () => {
     if(nodeId.trim()==='' || nodeId==null){
